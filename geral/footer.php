@@ -121,26 +121,43 @@
         });
 
         const cicloTexto = produtoSelecionado.ciclo === 'mensal' ?
-            '\u{1F4C5} Mensal' :
-            '\u{1F4C6} Anual';
+            'Mensal' :
+            'Anual';
 
-        const rotuloAcao = tipoAcao === 'comprar' ?
-            '\u{1F6D2} Quero Comprar' :
-            '\u{2753} Tenho Dúvidas';
+        const interesse = tipoAcao === 'comprar' ?
+            'Comprar' :
+            'Tirar dúvidas';
+
+        const observacao = tipoAcao === 'comprar' ?
+            'Vim através do site e gostaria de prosseguir com o atendimento.' :
+            'Vim através do site e gostaria de receber mais informações sobre este produto.';
 
         const textoMensagem =
-            `\u{1F44B} Olá, Didi!
+            `Olá, Didi!
 
-Encontrei um plano em seu site e gostaria de falar com você.
+SOLICITAÇÃO DE ATENDIMENTO
 
-\u{1F4CC} *Produto:* ${produtoSelecionado.titulo}
-\u{1F4B0} *Valor:* R$ ${precoFormatado}
-${cicloTexto}
+-----------------------------------
+CLIENTE
+-----------------------------------
+Nome: ${nomeUser}
 
-\u{1F3AF} *Interesse:* ${rotuloAcao}
-\u{1F464} *Meu nome:* ${nomeUser}
+-----------------------------------
+PRODUTO
+-----------------------------------
+Produto: ${produtoSelecionado.titulo}
+Plano: ${cicloTexto}
+Valor: R$ ${precoFormatado}
 
-Aguardo seu retorno. \u{1F60A}`;
+-----------------------------------
+INTERESSE
+-----------------------------------
+${interesse}
+
+-----------------------------------
+OBSERVAÇÃO
+-----------------------------------
+${observacao}`;
 
         const urlFinal = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(textoMensagem)}`;
 
