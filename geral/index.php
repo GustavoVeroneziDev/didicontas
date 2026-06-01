@@ -1,5 +1,9 @@
 <?php
+
 // Inclui a conexão que está dentro da pasta config
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 require_once '../config/conexao.php';
 
 // Inclui o header que está dentro da pasta geral
