@@ -18,7 +18,7 @@
                 <p class="text-sm text-indigo-100 mt-1">Os melhores planos Pro e IAs do mercado</p>
             </div>
 
-            <a href="https://wa.me/5500000000000" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-5 py-2.5 rounded-lg shadow transition duration-300 flex items-center gap-2">
+            <a href="https://wa.me/556193750626" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-5 py-2.5 rounded-lg shadow transition duration-300 flex items-center gap-2">
                 <i class="fa-brands fa-whatsapp text-lg"></i> Atendimento Geral
             </a>
         </div>
