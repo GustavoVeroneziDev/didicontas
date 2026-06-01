@@ -21,7 +21,7 @@
 
 <script>
     // Altere para o número de WhatsApp do Didicontas (com DDD e Código do País. Ex: 5511999999999)
-    const NUMERO_WHATSAPP = "5500000000000";
+    const NUMERO_WHATSAPP = "556193750626";
 
     let dadosProdutoAtual = null;
 
