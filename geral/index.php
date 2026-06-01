@@ -45,34 +45,45 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-    <div id="gridProdutos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div id="gridProdutos" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         <?php if (count($produtos) > 0): ?>
             <?php foreach ($produtos as $prod): ?>
-                <div class="card-produto bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex flex-col overflow-hidden"
+                <div class="card-produto bg-white rounded-xl md:rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 flex flex-col overflow-hidden"
                     data-categoria="cat-<?php echo $prod['categoria_id']; ?>"
                     data-titulo="<?php echo strtolower(htmlspecialchars($prod['titulo'])); ?>">
 
-                    <div class="p-5 flex-get flex flex-col h-full">
-                        <span class="inline-block text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md mb-3 self-start">
-                            <?php echo htmlspecialchars($prod['categoria_nome'] ?? 'Geral'); ?>
-                        </span>
+                    <div class="p-3.5 md:p-5 flex flex-col flex-grow">
+                        <div class="flex justify-between items-start mb-1.5 md:mb-3">
+                            <span class="inline-block text-[10px] md:text-xs font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded-md">
+                                <?php echo htmlspecialchars($prod['categoria_nome'] ?? 'Geral'); ?>
+                            </span>
 
-                        <h2 class="text-xl font-bold text-gray-900 mb-2 truncate-2-lines"><?php echo htmlspecialchars($prod['titulo']); ?></h2>
+                            <div class="flex items-baseline gap-0.5 md:hidden">
+                                <span class="text-[10px] text-gray-500 font-semibold">R$</span>
+                                <span class="text-base font-black text-gray-900"><?php echo number_format($prod['preco'], 2, ',', '.'); ?></span>
+                            </div>
+                        </div>
 
-                        <p class="text-gray-500 text-sm mb-4 line-clamp-3 flex-grow"><?php echo nl2br(htmlspecialchars($prod['descricao'])); ?></p>
+                        <h2 class="text-[15px] md:text-xl font-bold text-gray-900 leading-tight mb-1 md:mb-2">
+                            <?php echo htmlspecialchars($prod['titulo']); ?>
+                        </h2>
 
-                        <div class="mt-auto pt-4 border-t border-gray-50 flex items-baseline gap-1">
+                        <p class="text-gray-500 text-[11px] md:text-sm line-clamp-1 md:line-clamp-3 mb-1 md:mb-4">
+                            <?php echo nl2br(htmlspecialchars($prod['descricao'])); ?>
+                        </p>
+
+                        <div class="hidden md:flex mt-auto pt-4 border-t border-gray-50 items-baseline gap-1">
                             <span class="text-xs text-gray-400 font-semibold">R$</span>
                             <span class="text-2xl font-black text-gray-950"><?php echo number_format($prod['preco'], 2, ',', '.'); ?></span>
                             <span class="text-xs text-gray-400">/acesso</span>
                         </div>
                     </div>
 
-                    <div class="bg-gray-50/70 px-5 py-4 border-t border-gray-50 grid grid-cols-2 gap-2.5">
-                        <button onclick="abrirModalWhatsapp('saber_mais', '<?php echo addslashes($prod['titulo']); ?>', '<?php echo number_format($prod['preco'], 2, ',', '.'); ?>')" class="text-xs font-bold text-gray-600 hover:text-gray-900 border border-gray-200 bg-white hover:bg-gray-100 py-2.5 rounded-xl transition text-center cursor-pointer">
+                    <div class="bg-gray-50/80 px-3 md:px-5 py-2.5 md:py-4 border-t border-gray-50 grid grid-cols-2 gap-2 md:gap-2.5 mt-auto">
+                        <button onclick="abrirModalWhatsapp('saber_mais', '<?php echo addslashes($prod['titulo']); ?>', '<?php echo number_format($prod['preco'], 2, ',', '.'); ?>')" class="text-[11px] md:text-xs font-bold text-gray-700 hover:text-gray-900 border border-gray-200 bg-white hover:bg-gray-100 py-1.5 md:py-2.5 rounded-lg md:rounded-xl transition text-center cursor-pointer shadow-sm">
                             Saber Mais
                         </button>
-                        <button onclick="abrirModalWhatsapp('comprar', '<?php echo addslashes($prod['titulo']); ?>', '<?php echo number_format($prod['preco'], 2, ',', '.'); ?>')" class="text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl shadow-sm transition text-center cursor-pointer flex items-center justify-center gap-1">
+                        <button onclick="abrirModalWhatsapp('comprar', '<?php echo addslashes($prod['titulo']); ?>', '<?php echo number_format($prod['preco'], 2, ',', '.'); ?>')" class="text-[11px] md:text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white py-1.5 md:py-2.5 rounded-lg md:rounded-xl shadow-sm transition text-center cursor-pointer flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-cart-shopping"></i> Comprar
                         </button>
                     </div>
@@ -81,7 +92,7 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         <?php else: ?>
             <div class="col-span-full text-center py-12 bg-white rounded-2xl border border-dashed border-gray-200">
                 <i class="fa-solid fa-box-open text-gray-300 text-5xl mb-3"></i>
-                <p class="text-gray-500 font-medium">Nenhum produto cadastrado ou ativo no momento.</p>
+                <p class="text-gray-500 font-medium">Nenhum produto cadastrado no momento.</p>
             </div>
         <?php endif; ?>
     </div>
