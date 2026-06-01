@@ -1,89 +1,141 @@
-<footer class="bg-gray-900 text-gray-400 py-8 mt-auto border-t border-gray-800">
-    <div class="container mx-auto px-4 text-center">
-        <p class="font-medium text-gray-300">&copy; <?php echo date('Y'); ?> Didi Contas. Todos os direitos reservados.</p>
-        <p class="text-xs mt-2 text-gray-500">Desenvolvido com foco em alta performance e conversão.</p>
-    </div>
+<footer class="bg-gray-900 text-gray-500 py-6 mt-auto text-center text-xs border-t border-gray-800">
+    <p>&copy; <?php echo date('Y'); ?> Didi Contas. Todos os direitos reservados.</p>
 </footer>
 
-<div id="modalWhatsapp" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 mx-4 transform scale-95 transition-transform duration-300">
-        <h3 class="text-xl font-bold text-gray-900 mb-2">Quase lá!</h3>
-        <p class="text-gray-600 text-sm mb-4">Insira seu nome abaixo para iniciarmos o seu atendimento personalizado no WhatsApp.</p>
+<div id="modalDetalhes" class="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto transform translate-y-10 sm:translate-y-0 sm:scale-95 transition-all duration-300">
 
-        <input type="text" id="inputNomeUsuario" placeholder="Digite seu nome..." class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition mb-4">
-
-        <div class="flex gap-3 justify-end">
-            <button onclick="fecharModal()" class="px-4 py-2 text-gray-500 hover:bg-gray-100 rounded-lg transition">Cancelar</button>
-            <button onclick="confirmarRedirecionamento()" class="px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium rounded-lg shadow transition">Ir para o WhatsApp</button>
+        <div class="flex justify-between items-center mb-4">
+            <span id="mdCategoria" class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md">CATEGORIA</span>
+            <button onclick="fecharModal()" class="text-gray-400 hover:text-gray-600 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
+
+        <div id="mdContainerImagem" class="mb-4">
+            <div id="mdPlaceholder" class="w-full h-32 bg-gray-50 rounded-xl flex flex-col items-center justify-center text-gray-300 border border-dashed border-gray-200">
+                <i class="fa-solid fa-cloud-lightning text-2xl text-blue-400 mb-1"></i>
+                <span class="text-[10px] font-medium text-gray-400">Plano Digital Premium Ativo</span>
+            </div>
+        </div>
+
+        <h3 id="mdTitulo" class="text-xl font-black text-gray-900 mb-2 leading-tight">Título do Produto</h3>
+        <p id="mdDescricao" class="text-gray-600 text-sm mb-6 whitespace-pre-line leading-relaxed">Descrição detalhada vai aqui...</p>
+
+        <div class="bg-gray-50 rounded-xl p-4 mb-4 flex justify-between items-center border border-gray-100">
+            <span class="text-xs font-bold text-gray-500">Investimento do Plano:</span>
+            <div class="flex items-baseline gap-0.5">
+                <span class="text-xs text-blue-600 font-bold">R$</span>
+                <span id="mdPreco" class="text-2xl font-black text-gray-900">0,00</span>
+                <span id="mdCiclo" class="text-xs text-gray-400 font-medium ml-1">/mês</span>
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            <label class="block text-xs font-bold text-gray-700 tracking-wide">SEU NOME:</label>
+            <input type="text" id="nomeClienteInput" placeholder="Digite seu nome para o atendimento..." class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm transition">
+
+            <div class="grid grid-cols-2 gap-2 pt-2">
+                <button onclick="enviarMensagem('duvida')" class="py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition cursor-pointer text-center">
+                    <i class="fa-regular fa-comment-dots mr-1"></i> Tirar Dúvidas
+                </button>
+                <button onclick="enviarMensagem('comprar')" class="py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl shadow-md transition cursor-pointer text-center flex items-center justify-center gap-1.5">
+                    <i class="fa-brands fa-whatsapp text-sm"></i> Comprar Agora
+                </button>
+            </div>
+        </div>
+
     </div>
 </div>
 
 <script>
-    // Altere para o número de WhatsApp do Didicontas (com DDD e Código do País. Ex: 5511999999999)
-    const NUMERO_WHATSAPP = "556193750626";
+    const NUMERO_WHATSAPP = "556193750626"; // Número oficial configurado
+    let produtoSelecionado = null;
 
-    let dadosProdutoAtual = null;
+    function abrirDetalhes(produto) {
+        produtoSelecionado = produto;
 
-    function abrirModalWhatsapp(acao, produto, preco) {
-        // Guarda temporariamente os dados do card clicado
-        dadosProdutoAtual = {
-            acao,
-            produto,
-            preco
-        };
+        // Preenche os campos textuais do Modal
+        document.getElementById('mdCategoria').innerText = (produto.categoria_nome || 'GERAL').toUpperCase();
+        document.getElementById('mdTitulo').innerText = produto.titulo;
+        document.getElementById('mdDescricao').innerText = produto.descricao;
 
-        const modal = document.getElementById('modalWhatsapp');
+        // Formata o preço decimal vindo do banco
+        const precoFormatado = parseFloat(produto.preco).toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+        document.getElementById('mdPreco').innerText = precoFormatado;
+        document.getElementById('mdCiclo').innerText = produto.ciclo === 'mensal' ? '/mês' : '/ano';
+
+        // Gerencia o bloco de imagem (Se houver imagem cadastrada, exibe. Se não, mostra o placeholder)
+        const containerImagem = document.getElementById('mdContainerImagem');
+        if (produto.imagem_url && produto.imagem_url.trim() !== "") {
+            containerImagem.innerHTML = `<img src="${produto.imagem_url}" class="w-full h-44 object-cover rounded-xl border border-gray-100" alt="${produto.titulo}">`;
+        } else {
+            containerImagem.innerHTML = `
+                    <div class="w-full h-24 bg-gradient-to-br from-slate-50 to-gray-100 rounded-xl flex flex-col items-center justify-center text-gray-300 border border-gray-200/60">
+                        <i class="fa-solid fa-circle-nodes text-2xl text-blue-500/70 mb-1 animate-pulse"></i>
+                        <span class="text-[10px] font-bold text-slate-400 tracking-wider uppercase">Conexão Premium Ativa</span>
+                    </div>`;
+        }
+
+        // Abre o modal com animações fluidas
+        const modal = document.getElementById('modalDetalhes');
         modal.classList.remove('hidden');
         setTimeout(() => {
             modal.classList.remove('opacity-0');
-            modal.querySelector('div').classList.remove('scale-95');
+            modal.querySelector('div').classList.remove('translate-y-10', 'sm:scale-95');
         }, 10);
 
-        document.getElementById('inputNomeUsuario').focus();
+        document.getElementById('nomeClienteInput').focus();
     }
 
     function fecharModal() {
-        const modal = document.getElementById('modalWhatsapp');
+        const modal = document.getElementById('modalDetalhes');
         modal.classList.add('opacity-0');
-        modal.querySelector('div').classList.add('scale-95');
+        modal.querySelector('div').classList.add('translate-y-10', 'sm:scale-95');
         setTimeout(() => {
             modal.classList.add('hidden');
-            dadosProdutoAtual = null;
-            document.getElementById('inputNomeUsuario').value = "";
+            produtoSelecionado = null;
+            document.getElementById('nomeClienteInput').value = "";
         }, 300);
     }
 
-    function confirmarRedirecionamento() {
-        const nomeUsuario = document.getElementById('inputNomeUsuario').value.trim();
-
-        if (!nomeUsuario) {
-            alert("Por favor, digite o seu nome para continuar.");
+    function enviarMensagem(tipoAcao) {
+        const nomeUser = document.getElementById('nomeClienteInput').value.trim();
+        if (!nomeUser) {
+            alert("Por favor, digite o seu nome antes de prosseguir!");
             return;
         }
 
-        // Define o verbo com base na ação escolhida
-        const intencao = dadosProdutoAtual.acao === 'comprar' ? 'comprar' : 'saber mais sobre';
+        const rotuloAcao = tipoAcao === 'comprar' ? '🛒 QUERO COMPRAR' : '💡 TENHO DÚVIDAS';
+        const precoFormatado = parseFloat(produtoSelecionado.preco).toLocaleString('pt-BR', {
+            minimumFractionDigits: 2
+        });
+        const cicloTexto = produtoSelecionado.ciclo === 'mensal' ? 'Plano Mensal' : 'Plano Anual';
 
-        // Monta o texto da mensagem
-        const mensagem = `Olá, sou o ${nomeUsuario}, quero ${intencao} o produto: ${dadosProdutoAtual.produto} - Valor: R$ ${dadosProdutoAtual.preco}`;
+        // ESTRUTURAÇÃO PREMIUM DA MENSAGEM DO WHATSAPP (Super organizada)
+        const textoMensagem =
+            `👋 Olá, Didi! Estou no seu site e achei um plano excelente.
 
-        // Codifica o texto para formato de URL segura
-        const mensagemCodificada = encodeURIComponent(mensagem);
+📌 *PRODUTO:* ${produtoSelecionado.titulo}
+⏱️ *CICLO:* ${cicloTexto}
+💰 *VALOR:* R$ ${precoFormatado}
+🎯 *INTENÇÃO:* ${rotuloAcao}
 
-        // Constrói o link final do WhatsApp
-        const urlFinal = `https://wa.me/${NUMERO_WHATSAPP}?text=${mensagemCodificada}`;
+👤 *MEU NOME:* ${nomeUser}
 
-        // Abre em uma nova aba e fecha o modal
+Poderia me atender para fecharmos?`;
+
+        const urlFinal = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(textoMensagem)}`;
         window.open(urlFinal, '_blank');
         fecharModal();
     }
 
-    // Permite enviar ao apertar a tecla "Enter" dentro do input
-    document.getElementById('inputNomeUsuario').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            confirmarRedirecionamento();
-        }
+    // Fecha o modal ao clicar fora dele (na área acrílica)
+    document.getElementById('modalDetalhes').addEventListener('click', function(e) {
+        if (e.target === this) fecharModal();
     });
 </script>
 </body>
