@@ -121,27 +121,26 @@
         });
 
         const cicloTexto = produtoSelecionado.ciclo === 'mensal' ?
-            '📅 Mensal' :
-            '📆 Anual';
+            '\u{1F4C5} Mensal' :
+            '\u{1F4C6} Anual';
 
         const rotuloAcao = tipoAcao === 'comprar' ?
-            '🛒 Quero Comprar' :
-            '❓ Tenho Dúvidas';
+            '\u{1F6D2} Quero Comprar' :
+            '\u{2753} Tenho Dúvidas';
 
         const textoMensagem =
-            `👋 Olá, Didi!
+            `\u{1F44B} Olá, Didi!
 
 Encontrei um plano em seu site e gostaria de falar com você.
 
-📌 *Produto:* ${produtoSelecionado.titulo}
-💰 *Valor:* R$ ${precoFormatado}
+\u{1F4CC} *Produto:* ${produtoSelecionado.titulo}
+\u{1F4B0} *Valor:* R$ ${precoFormatado}
 ${cicloTexto}
 
-🎯 *Interesse:* ${rotuloAcao}
+\u{1F3AF} *Interesse:* ${rotuloAcao}
+\u{1F464} *Meu nome:* ${nomeUser}
 
-👤 *Meu nome:* ${nomeUser}
-
-Aguardo seu retorno. 😊`;
+Aguardo seu retorno. \u{1F60A}`;
 
         const urlFinal = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(textoMensagem)}`;
 
