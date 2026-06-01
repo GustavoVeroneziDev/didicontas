@@ -27,7 +27,7 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           # Altere para a pasta raiz do seu site no servidor (ex: /public_html/ ou /public_html/didicontas/)
-          server-dir: /didicontas.gustavoveronezi.com/ 
+          server-dir: ./
           # Opcional: Ignora pastas que não precisam ir para o servidor
           exclude: |
             **/.git*
