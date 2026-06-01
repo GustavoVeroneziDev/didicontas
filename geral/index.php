@@ -1,9 +1,9 @@
 <?php
 // Inclui a conexão que está dentro da pasta config
-require_once 'config/conexao.php';
+require_once '../config/conexao.php';
 
 // Inclui o header que está dentro da pasta geral
-require_once 'geral/header.php';
+require_once '../geral/header.php';
 // Busca todas as categorias cadastradas para criar os botões de filtro
 $stmt_cat = $pdo->query("SELECT * FROM categorias ORDER BY nome ASC");
 $categorias = $stmt_cat->fetchAll(PDO::FETCH_ASSOC);
@@ -138,5 +138,5 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
 </script>
 
 <?php
-require_once 'geral/footer.php';
+require_once '../geral/footer.php';
 ?>
