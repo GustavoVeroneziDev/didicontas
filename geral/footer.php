@@ -104,36 +104,51 @@
 
     function enviarMensagem(tipoAcao) {
         const nomeUser = document.getElementById('nomeClienteInput').value.trim();
+
         if (!nomeUser) {
             alert("Por favor, digite o seu nome antes de prosseguir!");
             return;
         }
 
-        const rotuloAcao = tipoAcao === 'comprar' ? '🛒 QUERO COMPRAR' : '💡 TENHO DÚVIDAS';
+        if (!produtoSelecionado) {
+            alert("Nenhum produto selecionado.");
+            return;
+        }
+
         const precoFormatado = parseFloat(produtoSelecionado.preco).toLocaleString('pt-BR', {
-            minimumFractionDigits: 2
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
         });
+
+        const cicloTexto = produtoSelecionado.ciclo === 'mensal' ?
+            '📅 Mensal' :
+            '📆 Anual';
+
+        const rotuloAcao = tipoAcao === 'comprar' ?
+            '🛒 Quero Comprar' :
+            '❓ Tenho Dúvidas';
+
         const textoMensagem =
-            `\u{1F44B} Olá, Didi! Estou no seu site e achei um plano excelente.
+            `👋 Olá, Didi!
 
-\u{1F4CC} *PRODUTO:* ${produtoSelecionado.titulo}
-\u{23F1} *CICLO:* ${cicloTexto}
-\u{1F4B0} *VALOR:* R$ ${precoFormatado}
-\u{1F3AF} *INTENÇÃO:* ${rotuloAcao}
+Encontrei um plano em seu site e gostaria de falar com você.
 
-\u{1F464} *MEU NOME:* ${nomeUser}
+📌 *Produto:* ${produtoSelecionado.titulo}
+💰 *Valor:* R$ ${precoFormatado}
+${cicloTexto}
 
-Poderia me atender para fecharmos?`;
+🎯 *Interesse:* ${rotuloAcao}
+
+👤 *Meu nome:* ${nomeUser}
+
+Aguardo seu retorno. 😊`;
 
         const urlFinal = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(textoMensagem)}`;
+
         window.open(urlFinal, '_blank');
+
         fecharModal();
     }
-
-    // Fecha o modal ao clicar fora dele (na área acrílica)
-    document.getElementById('modalDetalhes').addEventListener('click', function(e) {
-        if (e.target === this) fecharModal();
-    });
 </script>
 </body>
 
