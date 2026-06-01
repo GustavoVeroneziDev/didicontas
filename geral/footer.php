@@ -113,18 +113,15 @@
         const precoFormatado = parseFloat(produtoSelecionado.preco).toLocaleString('pt-BR', {
             minimumFractionDigits: 2
         });
-        const cicloTexto = produtoSelecionado.ciclo === 'mensal' ? 'Plano Mensal' : 'Plano Anual';
-
-        // ESTRUTURAÇÃO PREMIUM DA MENSAGEM DO WHATSAPP (Super organizada)
         const textoMensagem =
-            `👋 Olá, Didi! Estou no seu site e achei um plano excelente.
+            `\u{1F44B} Olá, Didi! Estou no seu site e achei um plano excelente.
 
-📌 *PRODUTO:* ${produtoSelecionado.titulo}
-⏱️ *CICLO:* ${cicloTexto}
-💰 *VALOR:* R$ ${precoFormatado}
-🎯 *INTENÇÃO:* ${rotuloAcao}
+\u{1F4CC} *PRODUTO:* ${produtoSelecionado.titulo}
+\u{23F1} *CICLO:* ${cicloTexto}
+\u{1F4B0} *VALOR:* R$ ${precoFormatado}
+\u{1F3AF} *INTENÇÃO:* ${rotuloAcao}
 
-👤 *MEU NOME:* ${nomeUser}
+\u{1F464} *MEU NOME:* ${nomeUser}
 
 Poderia me atender para fecharmos?`;
 
