@@ -1,0 +1,35 @@
+name: Deploy Automático para Hospedagem (FTP)
+
+# Controla quando a Action vai rodar
+on:
+  # Dispara o deploy sempre que houver um push na branch "main"
+  push:
+    branches: [ "main" ]
+
+  # Permite que você rode essa Action manualmente na aba "Actions"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: 🚀 Deploy via FTP
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Faz o checkout do repositório (baixa os arquivos para o runner)
+      - name: 🚚 Obtendo os arquivos do repositório
+        uses: actions/checkout@v4
+
+      # 2. Sincroniza os arquivos com a sua hospedagem via FTP
+      - name: 📂 Sincronizando com o Servidor
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # Altere para a pasta raiz do seu site no servidor (ex: /public_html/ ou /public_html/didicontas/)
+          server-dir: /public_html/ 
+          # Opcional: Ignora pastas que não precisam ir para o servidor
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/README.md
