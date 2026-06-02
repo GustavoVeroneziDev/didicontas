@@ -1,0 +1,314 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+
+:root {
+  --bg: #0b0f1a;
+  --bg2: #111827;
+  --surface: #161d2e;
+  --surface2: #1e2840;
+  --surface3: #242e47;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.15);
+  --accent: #3b82f6;
+  --green: #10b981;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+}
+
+body {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface3);
+  border-radius: 10px;
+}
+
+/* ─── Overrides do Bootstrap (Tema Dark Premium) ─── */
+.card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.card-header {
+  border-bottom: 1px solid var(--border);
+  background-color: transparent;
+}
+.card-footer {
+  border-top: 1px solid var(--border);
+  background-color: transparent;
+}
+
+.form-control,
+.form-select {
+  background-color: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+}
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--surface2);
+  border-color: var(--accent);
+  color: var(--text);
+  box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.15);
+}
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+
+.form-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+/* Botões */
+.btn {
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-primary {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+.btn-success {
+  background-color: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+.btn-outline-light {
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+.btn-outline-light:hover {
+  background-color: var(--surface2);
+  color: var(--text);
+  border-color: var(--border-hover);
+}
+
+/* Tabelas */
+.table-dark {
+  --bs-table-bg: transparent;
+  --bs-table-striped-bg: rgba(255, 255, 255, 0.02);
+  --bs-table-border-color: var(--border);
+}
+.table-dark th {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+.table-dark td {
+  vertical-align: middle;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+/* Badges */
+.badge {
+  padding: 0.35rem 0.65rem;
+  border-radius: 100px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.bg-primary-soft {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+}
+.bg-success-soft {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+.bg-danger-soft {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+.bg-secondary-soft {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+}
+
+/* ─── Layout Sidebar & Dashboard ─── */
+.wrapper {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+.sidebar {
+  width: 260px;
+  background-color: var(--bg2);
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s;
+}
+.content-area {
+  flex-grow: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg);
+}
+
+.sidebar-brand {
+  padding: 1.5rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-brand span {
+  color: var(--yellow);
+}
+
+.nav-pills .nav-link {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-pills .nav-link:hover {
+  background-color: var(--surface);
+  color: var(--text);
+}
+.nav-pills .nav-link.active {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: var(--accent);
+  border-right: 3px solid var(--accent);
+}
+.nav-pills .nav-link i {
+  width: 20px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -260px;
+    top: 0;
+    bottom: 0;
+    z-index: 1050;
+  }
+  .sidebar.show {
+    left: 0;
+    box-shadow: 0 0 0 100vw rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* ─── Elementos Customizados (Upload, Preview e Switches) ─── */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 2rem 1rem;
+  text-align: center;
+  background-color: var(--surface2);
+  cursor: pointer;
+  position: relative;
+  transition: 0.2s;
+}
+.upload-zone:hover {
+  border-color: var(--accent);
+  background-color: rgba(59, 130, 246, 0.05);
+}
+.upload-zone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.img-preview-box {
+  width: 100%;
+  max-width: 250px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin-top: 10px;
+}
+
+/* Switch estilo iOS */
+.form-check-input {
+  width: 2.5em !important;
+  height: 1.25em !important;
+  cursor: pointer;
+  background-color: var(--surface3);
+  border-color: var(--border);
+}
+.form-check-input:checked {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Live Preview Sticky */
+.preview-sticky {
+  position: sticky;
+  top: 20px;
+}
+.card-live-preview {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.3s;
+}
+.card-live-preview img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  background: var(--surface3);
+}
+
+/* Grade de Ícones */
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
+  gap: 8px;
+}
+.icon-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 8px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.icon-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+.icon-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
