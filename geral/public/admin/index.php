@@ -2,11 +2,33 @@
 /* ═══════════════════════════════════════════════════════════
    DIDICONTAS — PAINEL ADMIN
    Arquivo único: autenticação + CRUD produtos + categorias
-   Coloque em: /public/admin/index.php
+
+   ESTRUTURA DO PROJETO:
+   DIDICONTAS/
+   ├── config/conexao.php
+   └── geral/
+       └── public/
+           └── admin/
+               └── index.php  ← ESTE ARQUIVO
+
+   URL: didicontas.gustavoveronezi.com/geral/public/admin/
    ═══════════════════════════════════════════════════════════ */
 
 session_start();
-require_once '../../config/conexao.php';
+
+// 3 níveis acima: admin/ → public/ → geral/ → raiz onde fica config/
+$conexao_path = __DIR__ . '/../../../config/conexao.php';
+if (!file_exists($conexao_path)) {
+    die('<pre style="font:14px monospace;padding:2rem;color:#f87171;background:#0b0f1a;">
+ERRO: conexao.php não encontrado.
+Caminho tentado: ' . $conexao_path . '
+
+Verifique se a estrutura de pastas é:
+  DIDICONTAS/config/conexao.php
+  DIDICONTAS/geral/public/admin/index.php
+</pre>');
+}
+require_once $conexao_path;
 
 /* ─── Configuração de acesso ──────────────────────────────── */
 define('ADMIN_USER', 'didi');
@@ -1122,7 +1144,7 @@ $flash = getFlash();
                 </form>
 
                 <p style="text-align:center;margin-top:1.5rem;font-size:0.73rem;color:var(--text3);">
-                    <a href="../" style="color:var(--accent);text-decoration:none;">← Voltar para a vitrine</a>
+                    <a href="/geral/index.php" style="color:var(--accent);text-decoration:none;">← Voltar para a vitrine</a>
                 </p>
             </div>
         </div>
@@ -1152,7 +1174,7 @@ $flash = getFlash();
 
                 <p class="nav-section" style="margin-top:0.5rem;">Atalhos</p>
                 <a href="?page=produtos&novo=1" class="nav-item"><i class="fa-solid fa-plus"></i> Novo produto</a>
-                <a href="../" target="_blank" class="nav-item"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ver vitrine</a>
+                <a href="/geral/index.php" target="_blank" class="nav-item"><i class="fa-solid fa-arrow-up-right-from-square"></i> Ver vitrine</a>
 
                 <div class="sidebar-footer">
                     <a href="?action=logout" class="nav-item" style="color:var(--text3);">
