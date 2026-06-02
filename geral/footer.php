@@ -300,23 +300,14 @@
 
         /* Mensagem formatada sem emojis, compativel com todos os aparelhos */
         const textoMensagem =
-            `Ola, Didi!
+            `*Cliente:* \`${nomeUser}\`
+*Produto:* \`${produtoSelecionado.titulo}\`
+*Plano:* \`${cicloTexto}\`
+*Valor:* \`R$ ${precoFormatado}\`
+*Interesse:* \`${interesse}\`
 
-SOLICITACAO DE ATENDIMENTO
-
-CLIENTE
-Nome: ${nomeUser}
-
-PRODUTO
-Produto: ${produtoSelecionado.titulo}
-Plano: ${cicloTexto}
-Valor: R$ ${precoFormatado}
-
-INTERESSE
-${interesse}
-
-OBSERVACAO
-${observacao}`;
+*OBSERVAÇÃO:*
+\`${observacao}\``;
 
         const urlFinal = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(textoMensagem)}`;
         window.open(urlFinal, '_blank', 'noopener,noreferrer');
