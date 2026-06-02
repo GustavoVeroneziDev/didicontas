@@ -1,21 +1,32 @@
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
 :root {
-  --bg: #0b0f1a;
-  --bg2: #111827;
-  --surface: #161d2e;
-  --surface2: #1e2840;
-  --surface3: #242e47;
-  --border: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(255, 255, 255, 0.15);
+  /* Paleta de fundo - mais distinção entre níveis */
+  --bg: #080c14;
+  --bg2: #0e1420;
+  --surface: #131b2e;
+  --surface2: #1a2540;
+  --surface3: #212f50;
+
+  /* Bordas com mais contraste */
+  --border: rgba(255, 255, 255, 0.1);
+  --border-hover: rgba(255, 255, 255, 0.22);
+  --border-focus: rgba(59, 130, 246, 0.55);
+
+  /* Cores de destaque */
   --accent: #3b82f6;
+  --accent2: #60a5fa;
   --green: #10b981;
   --red: #ef4444;
   --yellow: #f59e0b;
-  --text: #f1f5f9;
-  --text-muted: #94a3b8;
+
+  /* Texto com mais hierarquia */
+  --text: #e8edf5;
+  --text-muted: #7a90b0;
+  --text-dim: #4e6080;
 }
 
+/* ─── Base ─── */
 body {
   font-family: "Plus Jakarta Sans", sans-serif;
   background-color: var(--bg);
@@ -25,8 +36,8 @@ body {
 
 /* ─── Scrollbar ─── */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
@@ -36,7 +47,11 @@ body {
   border-radius: 10px;
 }
 
-/* ─── Overrides do Bootstrap (Tema Dark Premium) ─── */
+/* ═══════════════════════════════════════════════════════
+   BOOTSTRAP DARK OVERRIDES
+═══════════════════════════════════════════════════════ */
+
+/* ─── Cards ─── */
 .card {
   background-color: var(--surface);
   border: 1px solid var(--border);
@@ -51,6 +66,7 @@ body {
   background-color: transparent;
 }
 
+/* ─── Inputs & Selects ─── */
 .form-control,
 .form-select {
   background-color: var(--surface2);
@@ -58,28 +74,33 @@ body {
   color: var(--text);
   border-radius: 8px;
   padding: 0.6rem 1rem;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s,
+    background-color 0.2s;
 }
 .form-control:focus,
 .form-select:focus {
   background-color: var(--surface2);
   border-color: var(--accent);
   color: var(--text);
-  box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
 }
 .form-control::placeholder {
-  color: var(--text-muted);
+  color: var(--text-dim);
 }
 
+/* ─── Labels ─── */
 .form-label {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
   color: var(--text-muted);
   margin-bottom: 0.4rem;
 }
 
-/* Botões */
+/* ─── Botões ─── */
 .btn {
   font-weight: 700;
   border-radius: 8px;
@@ -88,69 +109,112 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  transition: all 0.18s;
 }
 .btn-primary {
   background-color: var(--accent);
   border-color: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
 }
 .btn-success {
   background-color: var(--green);
   border-color: var(--green);
   color: #fff;
 }
+.btn-success:hover {
+  background-color: #059669;
+  border-color: #059669;
+}
 .btn-outline-light {
-  border-color: var(--border);
+  border-color: var(--border-hover);
   color: var(--text-muted);
+  background: transparent;
 }
 .btn-outline-light:hover {
   background-color: var(--surface2);
   color: var(--text);
-  border-color: var(--border-hover);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+.btn-outline-danger {
+  color: var(--red);
+  border-color: transparent;
+}
+.btn-outline-danger:hover {
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border-color: transparent;
 }
 
-/* Tabelas */
+/* ─── Tabelas ─── */
 .table-dark {
   --bs-table-bg: transparent;
-  --bs-table-striped-bg: rgba(255, 255, 255, 0.02);
+  --bs-table-striped-bg: rgba(255, 255, 255, 0.025);
+  --bs-table-hover-bg: rgba(255, 255, 255, 0.045);
   --bs-table-border-color: var(--border);
+  color: var(--text);
 }
 .table-dark th {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
   color: var(--text-muted);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
+  padding-top: 0.9rem;
+  padding-bottom: 0.9rem;
+  background-color: rgba(255, 255, 255, 0.02);
 }
 .table-dark td {
   vertical-align: middle;
   font-size: 0.9rem;
   color: var(--text);
+  border-color: var(--border);
+  padding: 0.85rem 0.75rem;
+}
+.table-dark tbody tr {
+  transition: background 0.15s;
 }
 
-/* Badges */
+/* ─── Badges ─── */
 .badge {
-  padding: 0.35rem 0.65rem;
+  padding: 0.32rem 0.7rem;
   border-radius: 100px;
   font-weight: 700;
+  font-size: 0.72rem;
   letter-spacing: 0.3px;
 }
+
+/* Badge azul: fundo mais saturado, texto bem legível */
 .bg-primary-soft {
-  background-color: rgba(59, 130, 246, 0.15);
+  background-color: rgba(59, 130, 246, 0.2);
   color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
+/* Badge verde */
 .bg-success-soft {
-  background-color: rgba(16, 185, 129, 0.15);
+  background-color: rgba(16, 185, 129, 0.18);
   color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.28);
 }
+/* Badge vermelho */
 .bg-danger-soft {
-  background-color: rgba(239, 68, 68, 0.15);
+  background-color: rgba(239, 68, 68, 0.18);
   color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.28);
 }
+/* Badge neutro: borda visível para não sumir no fundo escuro */
 .bg-secondary-soft {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: var(--text-muted);
+  background-color: rgba(255, 255, 255, 0.07);
+  color: #a0b4cc;
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-/* ─── Layout Sidebar & Dashboard ─── */
+/* ═══════════════════════════════════════════════════════
+   LAYOUT — SIDEBAR & ÁREA DE CONTEÚDO
+═══════════════════════════════════════════════════════ */
 .wrapper {
   display: flex;
   width: 100%;
@@ -163,7 +227,7 @@ body {
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s;
+  transition: left 0.3s;
 }
 .content-area {
   flex-grow: 1;
@@ -173,38 +237,49 @@ body {
   background-color: var(--bg);
 }
 
+/* Brand */
 .sidebar-brand {
   padding: 1.5rem;
   font-size: 1.3rem;
   font-weight: 800;
   border-bottom: 1px solid var(--border);
+  letter-spacing: -0.3px;
 }
 .sidebar-brand span {
   color: var(--yellow);
 }
 
+/* Nav da sidebar */
 .nav-pills .nav-link {
   color: var(--text-muted);
   font-weight: 600;
-  font-size: 0.9rem;
-  padding: 0.75rem 1.25rem;
+  font-size: 0.875rem;
+  padding: 0.72rem 1.25rem;
   border-radius: 0;
   display: flex;
   align-items: center;
   gap: 10px;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 .nav-pills .nav-link:hover {
-  background-color: var(--surface);
+  background-color: rgba(255, 255, 255, 0.05);
   color: var(--text);
 }
 .nav-pills .nav-link.active {
-  background-color: rgba(59, 130, 246, 0.1);
-  color: var(--accent);
+  background-color: rgba(59, 130, 246, 0.12);
+  color: var(--accent2);
   border-right: 3px solid var(--accent);
 }
+.nav-pills .nav-link.text-danger:hover {
+  background-color: rgba(239, 68, 68, 0.08);
+  color: #f87171 !important;
+}
 .nav-pills .nav-link i {
-  width: 20px;
+  width: 18px;
   text-align: center;
+  opacity: 0.9;
 }
 
 @media (max-width: 768px) {
@@ -217,11 +292,13 @@ body {
   }
   .sidebar.show {
     left: 0;
-    box-shadow: 0 0 0 100vw rgba(0, 0, 0, 0.7);
+    box-shadow: 0 0 0 100vw rgba(0, 0, 0, 0.75);
   }
 }
 
-/* ─── Elementos Customizados (Upload, Preview e Switches) ─── */
+/* ═══════════════════════════════════════════════════════
+   UPLOAD ZONE & PREVIEW
+═══════════════════════════════════════════════════════ */
 .upload-zone {
   border: 2px dashed var(--border);
   border-radius: 12px;
@@ -230,11 +307,13 @@ body {
   background-color: var(--surface2);
   cursor: pointer;
   position: relative;
-  transition: 0.2s;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
 }
 .upload-zone:hover {
   border-color: var(--accent);
-  background-color: rgba(59, 130, 246, 0.05);
+  background-color: rgba(59, 130, 246, 0.06);
 }
 .upload-zone input[type="file"] {
   position: absolute;
@@ -252,20 +331,20 @@ body {
   margin-top: 10px;
 }
 
-/* Switch estilo iOS */
+/* ─── Switch iOS ─── */
 .form-check-input {
   width: 2.5em !important;
   height: 1.25em !important;
   cursor: pointer;
   background-color: var(--surface3);
-  border-color: var(--border);
+  border-color: var(--border-hover);
 }
 .form-check-input:checked {
   background-color: var(--accent);
   border-color: var(--accent);
 }
 
-/* Live Preview Sticky */
+/* ─── Live Preview Sticky ─── */
 .preview-sticky {
   position: sticky;
   top: 20px;
@@ -275,7 +354,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
   transition: opacity 0.3s;
 }
 .card-live-preview img {
@@ -285,30 +364,179 @@ body {
   background: var(--surface3);
 }
 
-/* Grade de Ícones */
+/* ═══════════════════════════════════════════════════════
+   CATEGORIAS — ACCORDION & GRADE DE ÍCONES
+   (principal área corrigida)
+═══════════════════════════════════════════════════════ */
+
+/* Forçar fundo do accordion diferente do card para que não "suma" */
+.accordion {
+  --bs-accordion-bg: var(--surface3);
+  --bs-accordion-color: var(--text);
+  --bs-accordion-border-color: var(--border);
+  --bs-accordion-btn-color: var(--text);
+  --bs-accordion-btn-bg: var(--surface2);
+  --bs-accordion-active-color: var(--accent2);
+  --bs-accordion-active-bg: rgba(59, 130, 246, 0.08);
+  --bs-accordion-btn-focus-box-shadow: none;
+  --bs-accordion-btn-icon-color: var(--text-muted);
+  --bs-accordion-btn-active-icon-color: var(--accent2);
+}
+
+.accordion-item {
+  background-color: var(--surface2);
+  border-color: var(--border) !important;
+  border-radius: 10px !important;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.accordion-button {
+  background-color: var(--surface2) !important;
+  color: var(--text) !important;
+  font-weight: 700;
+  font-size: 0.875rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
+.accordion-button:not(.collapsed) {
+  background-color: rgba(59, 130, 246, 0.1) !important;
+  color: var(--accent2) !important;
+  border-bottom: 1px solid var(--border);
+  border-radius: 10px 10px 0 0 !important;
+}
+.accordion-button::after {
+  filter: invert(60%) sepia(10%) saturate(400%) hue-rotate(180deg);
+}
+.accordion-button:not(.collapsed)::after {
+  filter: invert(60%) sepia(50%) saturate(600%) hue-rotate(190deg)
+    brightness(1.2);
+}
+
+.accordion-body {
+  background-color: var(--surface2);
+  padding: 0.9rem 1rem;
+}
+
+/* ─── Grade de ícones (dentro do accordion) ─── */
 .icon-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+  gap: 7px;
 }
+
 .icon-btn {
-  background: var(--surface2);
+  background: var(--surface3);
   border: 1px solid var(--border);
   color: var(--text-muted);
   border-radius: 8px;
-  height: 45px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: 0.2s;
+  font-size: 1rem;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    color 0.15s,
+    transform 0.1s;
 }
 .icon-btn:hover {
   border-color: var(--accent);
-  color: var(--text);
+  color: var(--accent2);
+  background: rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
 }
 .icon-btn.active {
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.35);
+}
+
+/* ─── Preview do ícone selecionado (na tela de categoria) ─── */
+.icon-preview-wrap {
+  background-color: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+.icon-preview-wrap i {
+  font-size: 1.5rem;
+  color: var(--accent2);
+}
+.icon-preview-wrap .font-monospace {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   ALERTAS
+═══════════════════════════════════════════════════════ */
+.alert {
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+.alert-success {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border-left: 3px solid var(--green);
+}
+.alert-danger {
+  background-color: rgba(239, 68, 68, 0.13);
+  color: #f87171;
+  border-left: 3px solid var(--red);
+}
+.btn-close-white {
+  filter: invert(1) grayscale(1) brightness(2);
+}
+
+/* ═══════════════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════════════ */
+.modal-content {
+  background: var(--bg2) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6) !important;
+}
+.modal-header {
+  border-bottom: 1px solid var(--border) !important;
+}
+.modal-footer {
+  border-top: 1px solid var(--border) !important;
+}
+
+/* ═══════════════════════════════════════════════════════
+   UTILITÁRIOS EXTRAS
+═══════════════════════════════════════════════════════ */
+
+/* Texto primary visível sobre fundo escuro */
+.text-primary {
+  color: var(--accent2) !important;
+}
+
+/* Divisor de seção na sidebar */
+.nav-section-label {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-dim);
+  font-weight: 800;
+  padding: 0 1.25rem;
+  margin: 1.1rem 0 0.3rem;
+}
+
+/* Responsive main padding */
+@media (max-width: 576px) {
+  .container-fluid.p-md-4 {
+    padding: 1rem !important;
+  }
 }

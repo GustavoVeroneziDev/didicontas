@@ -8,7 +8,8 @@ if (!file_exists($conexao_path)) {
 require_once $conexao_path;
 
 define('UPLOAD_DIR',  __DIR__ . '/uploads/');
-define('UPLOAD_URL',  'uploads/');
+// CORREÇÃO 1: Caminho absoluto para a imagem carregar na vitrine
+define('UPLOAD_URL',  '/geral/public/admin/uploads/');
 define('MAX_IMG_SIZE', 3 * 1024 * 1024);
 
 if (!is_dir(UPLOAD_DIR)) {
@@ -263,18 +264,15 @@ $ICONES = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin — Didi Contas</title>
-    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Estilo Customizado -->
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="logoconfig.ico" type="image/ico">
 </head>
 
 <body>
 
     <?php if (!isLogged()): ?>
-        <!-- ════ TELA DE LOGIN ════ -->
         <div class="d-flex align-items-center justify-content-center vh-100">
             <div class="card p-4 shadow-lg" style="width: 100%; max-width: 400px;">
                 <div class="text-center mb-4">
@@ -307,10 +305,8 @@ $ICONES = [
         </div>
 
     <?php else: ?>
-        <!-- ════ DASHBOARD PRINCIPAL ════ -->
         <div class="wrapper">
 
-            <!-- SIDEBAR -->
             <aside class="sidebar" id="sidebar">
                 <div class="sidebar-brand d-flex justify-content-between align-items-center">
                     <div>didi<span>contas</span></div>
@@ -332,10 +328,8 @@ $ICONES = [
                 </div>
             </aside>
 
-            <!-- CONTEÚDO CENTRAL -->
             <div class="content-area">
 
-                <!-- Navbar Mobile -->
                 <div class="d-md-none bg-dark border-bottom p-3 d-flex justify-content-between align-items-center" style="border-color: var(--border) !important;">
                     <div class="fw-bold fs-5">didi<span style="color: var(--yellow);">contas</span></div>
                     <button class="btn btn-outline-light border-0" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
@@ -350,7 +344,6 @@ $ICONES = [
                         </div>
                     <?php endif; ?>
 
-                    <!-- ================= SEÇÃO PRODUTOS ================= -->
                     <?php if ($page === 'produtos'): ?>
                         <?php $isNovo = isset($_GET['novo']);
                         $isEditar = isset($editProd) && $editProd; ?>
@@ -369,7 +362,6 @@ $ICONES = [
                                 <input type="hidden" name="id" value="<?= $isEditar ? intval($editProd['id']) : 0 ?>">
 
                                 <div class="row g-4">
-                                    <!-- FORMULÁRIO -->
                                     <div class="col-lg-8">
                                         <div class="card p-4">
                                             <div class="row g-3">
@@ -406,36 +398,46 @@ $ICONES = [
                                                     <textarea name="descricao" class="form-control" rows="3"><?= htmlspecialchars($editProd['descricao'] ?? '') ?></textarea>
                                                 </div>
 
-                                                <!-- Imagem -->
                                                 <div class="col-12 mt-4">
-                                                    <label class="form-label text-white"><i class="fa-solid fa-image text-primary"></i> Imagem do Produto (Opcional)</label>
-                                                    <?php $imgAtual = $editProd['imagem_url'] ?? '';
-                                                    $isUploadLocal = ($imgAtual && !str_starts_with($imgAtual, 'http')); ?>
+                                                    <div class="p-3 rounded" style="background: var(--surface2); border: 1px solid var(--border);">
+                                                        <label class="form-label text-white mb-3"><i class="fa-solid fa-image text-primary me-1"></i> Imagem do Produto (Opcional)</label>
+                                                        <?php $imgAtual = $editProd['imagem_url'] ?? '';
+                                                        $isUploadLocal = ($imgAtual && !str_starts_with($imgAtual, 'http')); ?>
 
-                                                    <ul class="nav nav-pills mb-3 mt-2" id="imgTabs">
-                                                        <li class="nav-item"><button class="nav-link px-3 py-1 <?= !$isUploadLocal ? 'active' : '' ?>" type="button" data-bs-toggle="pill" data-bs-target="#tabUrl" onclick="document.getElementById('imgFileInput').value=''"><i class="fa-solid fa-link"></i> Link Web</button></li>
-                                                        <li class="nav-item"><button class="nav-link px-3 py-1 <?= $isUploadLocal ? 'active' : '' ?>" type="button" data-bs-toggle="pill" data-bs-target="#tabUpload" onclick="document.getElementById('imgUrlInput').value=''"><i class="fa-solid fa-upload"></i> Ficheiro Local</button></li>
-                                                    </ul>
+                                                        <ul class="nav nav-pills mb-3" id="imgTabs">
+                                                            <li class="nav-item">
+                                                                <button class="nav-link px-3 py-1 <?= !$isUploadLocal ? 'active' : '' ?>" type="button" data-bs-toggle="pill" data-bs-target="#tabUrl" onclick="document.getElementById('imgFileInput').value=''">
+                                                                    <i class="fa-solid fa-link"></i> Link Web
+                                                                </button>
+                                                            </li>
+                                                            <li class="nav-item">
+                                                                <button class="nav-link px-3 py-1 <?= $isUploadLocal ? 'active' : '' ?>" type="button" data-bs-toggle="pill" data-bs-target="#tabUpload" onclick="document.getElementById('imgUrlInput').value=''">
+                                                                    <i class="fa-solid fa-upload"></i> Ficheiro Local
+                                                                </button>
+                                                            </li>
+                                                        </ul>
 
-                                                    <div class="tab-content">
-                                                        <div class="tab-pane fade <?= !$isUploadLocal ? 'show active' : '' ?>" id="tabUrl">
-                                                            <input type="text" name="imagem_url" id="imgUrlInput" class="form-control" placeholder="https://exemplo.com/imagem.png" value="<?= !$isUploadLocal ? htmlspecialchars($imgAtual) : '' ?>" oninput="previewUrl(this.value)">
-                                                        </div>
-                                                        <div class="tab-pane fade <?= $isUploadLocal ? 'show active' : '' ?>" id="tabUpload">
-                                                            <div class="upload-zone">
-                                                                <input type="file" name="imagem_arquivo" id="imgFileInput" accept="image/*" onchange="previewFile(this)">
-                                                                <i class="fa-solid fa-cloud-arrow-up"></i>
-                                                                <div class="mt-2 text-muted small">Clique ou arraste a imagem aqui (Máx 3MB)</div>
+                                                        <div class="tab-content">
+                                                            <div class="tab-pane fade <?= !$isUploadLocal ? 'show active' : '' ?>" id="tabUrl">
+                                                                <input type="text" name="imagem_url" id="imgUrlInput" class="form-control" placeholder="https://exemplo.com/imagem.png" value="<?= !$isUploadLocal ? htmlspecialchars($imgAtual) : '' ?>" oninput="previewUrl(this.value)">
+                                                            </div>
+                                                            <div class="tab-pane fade <?= $isUploadLocal ? 'show active' : '' ?>" id="tabUpload">
+                                                                <div class="p-4 text-center rounded position-relative" style="background: var(--bg); border: 1px dashed var(--border) !important; cursor: pointer; transition: 0.2s;">
+                                                                    <input type="file" name="imagem_arquivo" id="imgFileInput" accept="image/*" onchange="previewFile(this)" style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 10;">
+                                                                    <i class="fa-solid fa-cloud-arrow-up fs-3 text-muted"></i>
+                                                                    <div class="mt-2 text-muted small">Clique ou arraste a imagem aqui (Máx 3MB)</div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
 
-                                                    <!-- Preview Imagem -->
-                                                    <div id="imgPreviewWrap" class="mt-3 position-relative" style="display: <?= $imgAtual ? 'inline-block' : 'none' ?>;">
-                                                        <img id="imgPreview" src="<?= htmlspecialchars($imgAtual) ?>" class="img-preview-box">
-                                                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 rounded-circle" onclick="removerImagem()"><i class="fa-solid fa-xmark"></i></button>
+                                                        <div id="imgPreviewWrap" class="mt-3 position-relative" style="display: <?= $imgAtual ? 'inline-block' : 'none' ?>; width: fit-content;">
+                                                            <img id="imgPreview" src="<?= htmlspecialchars($imgAtual) ?>" style="width: 250px; height: 140px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border);">
+                                                            <button type="button" class="btn btn-danger position-absolute top-0 end-0 m-2 rounded-circle shadow-sm" style="width: 30px; height: 30px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0;" onclick="removerImagem()" title="Remover imagem">
+                                                                <i class="fa-solid fa-xmark"></i>
+                                                            </button>
+                                                        </div>
+                                                        <input type="hidden" name="remover_imagem" id="removerImagemInput" value="">
                                                     </div>
-                                                    <input type="hidden" name="remover_imagem" id="removerImagemInput" value="">
                                                 </div>
 
                                                 <div class="col-12 mt-4 border-top pt-3" style="border-color: var(--border) !important;">
@@ -458,7 +460,6 @@ $ICONES = [
                                         </div>
                                     </div>
 
-                                    <!-- DIREITA: LIVE PREVIEW -->
                                     <div class="col-lg-4 d-none d-lg-block">
                                         <div class="preview-sticky">
                                             <p class="form-label mb-2">Pré-visualização do Card</p>
@@ -484,7 +485,6 @@ $ICONES = [
                             </form>
 
                         <?php else: ?>
-                            <!-- ════ LISTA DE PRODUTOS ════ -->
                             <div class="d-flex justify-content-between align-items-center mb-4">
                                 <div>
                                     <h2 class="fw-bold mb-0">Produtos</h2>
@@ -493,7 +493,6 @@ $ICONES = [
                                 <a href="?page=produtos&novo=1" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Novo Produto</a>
                             </div>
 
-                            <!-- Filtros -->
                             <div class="card p-3 mb-4">
                                 <form method="GET" action="" class="row g-2 align-items-end">
                                     <input type="hidden" name="page" value="produtos">
@@ -527,7 +526,6 @@ $ICONES = [
                                 </form>
                             </div>
 
-                            <!-- Tabela -->
                             <div class="card overflow-hidden">
                                 <div class="table-responsive">
                                     <table class="table table-dark table-hover mb-0">
@@ -564,7 +562,7 @@ $ICONES = [
                                                         <td class="text-end">
                                                             <a href="?page=produtos&editar=<?= $p['id'] ?>" class="btn btn-sm btn-outline-light px-2 py-1"><i class="fa-solid fa-pen"></i></a>
                                                             <a href="?action=toggle_status&id=<?= $p['id'] ?>&page=produtos" class="btn btn-sm btn-outline-light px-2 py-1"><i class="fa-solid <?= $p['status'] === 'ativo' ? 'fa-eye-slash' : 'fa-eye' ?>"></i></a>
-                                                            <a href="#" onclick="if(confirm('Excluir este produto?')) window.location.href='?action=excluir_produto&id=<?= $p['id'] ?>'" class="btn btn-sm btn-outline-danger px-2 py-1 border-0"><i class="fa-solid fa-trash"></i></a>
+                                                            <a href="javascript:void(0)" onclick="confirmarExclusao(<?= $p['id'] ?>, '<?= htmlspecialchars($p['titulo'], ENT_QUOTES) ?>')" class="btn btn-sm btn-outline-danger px-2 py-1 border-0"><i class="fa-solid fa-trash"></i></a>
                                                         </td>
                                                     </tr>
                                             <?php endforeach;
@@ -575,7 +573,6 @@ $ICONES = [
                             </div>
                         <?php endif; ?>
 
-                        <!-- ================= SEÇÃO CATEGORIAS ================= -->
                     <?php elseif ($page === 'categorias'): ?>
                         <?php
                         $editCat = null;
@@ -664,7 +661,7 @@ $ICONES = [
                                                     <td><span class="badge bg-secondary-soft"><?= $cntMap[$cat['id']] ?? 0 ?> itens</span></td>
                                                     <td class="text-end">
                                                         <a href="?page=categorias&editar=<?= $cat['id'] ?>" class="btn btn-sm btn-outline-light px-2 py-1"><i class="fa-solid fa-pen"></i></a>
-                                                        <a href="#" onclick="if(confirm('Excluir esta categoria?')) window.location.href='?action=excluir_categoria&id=<?= $cat['id'] ?>'" class="btn btn-sm btn-outline-danger px-2 py-1 border-0"><i class="fa-solid fa-trash"></i></a>
+                                                        <a href="javascript:void(0)" onclick="confirmarExclusaoCat(<?= $cat['id'] ?>, '<?= htmlspecialchars($cat['nome'], ENT_QUOTES) ?>')" class="btn btn-sm btn-outline-danger px-2 py-1 border-0"><i class="fa-solid fa-trash"></i></a>
                                                     </td>
                                                 </tr>
                                             <?php endforeach; ?>
@@ -679,7 +676,26 @@ $ICONES = [
             </div>
         </div>
 
-        <!-- Bootstrap Bundle JS -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true" data-bs-theme="dark">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.5);">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold text-danger" id="deleteModalLabel">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i> Confirmar Exclusão
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="flex-shrink: 0;"></button>
+                    </div>
+                    <div class="modal-body text-muted pt-3 pb-4" style="font-size: 0.95rem;" id="confirmMsg">
+                        Tem certeza que deseja remover este item?
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+                        <a href="#" id="confirmLink" class="btn btn-danger"><i class="fa-solid fa-trash me-1"></i> Sim, excluir</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
         <script>
@@ -697,7 +713,7 @@ $ICONES = [
                 btn.classList.add('active');
             }
 
-            // JS do Produto (Máscara, Upload, Preview)
+            // Máscara e Preview
             function mascaraPreco(input) {
                 let val = input.value.replace(/\D/g, '');
                 if (!val) {
@@ -778,6 +794,27 @@ $ICONES = [
                 }
             });
             window.onload = atualizarPreviewCard;
+
+            /* ════ LÓGICA DO MODAL DE EXCLUSÃO BOOTSTRAP ════ */
+            let deleteModalInstance;
+            document.addEventListener('DOMContentLoaded', () => {
+                const modalEl = document.getElementById('deleteModal');
+                if (modalEl) {
+                    deleteModalInstance = new bootstrap.Modal(modalEl);
+                }
+            });
+
+            function confirmarExclusao(id, titulo) {
+                document.getElementById('confirmMsg').innerHTML = `Tem certeza que deseja remover o produto <strong class="text-white">"${titulo}"</strong>?<br>Essa ação não pode ser desfeita.`;
+                document.getElementById('confirmLink').href = '?action=excluir_produto&id=' + id + '&page=produtos';
+                deleteModalInstance.show();
+            }
+
+            function confirmarExclusaoCat(id, nome) {
+                document.getElementById('confirmMsg').innerHTML = `Tem certeza que deseja remover a categoria <strong class="text-white">"${nome}"</strong>?<br>Ela só pode ser removida se não tiver produtos vinculados.`;
+                document.getElementById('confirmLink').href = '?action=excluir_categoria&id=' + id + '&page=categorias';
+                deleteModalInstance.show();
+            }
         </script>
     <?php endif; ?>
 </body>
