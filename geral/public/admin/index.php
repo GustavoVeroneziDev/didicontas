@@ -168,6 +168,17 @@ if ($action === 'toggle_status') {
     header('Location: ?page=produtos');
     exit;
 }
+if ($action === 'toggle_destaque') {
+    requireLogin();
+    $id = intval($_GET['id'] ?? 0);
+    if ($id > 0) {
+        // Inverte o valor: se for 1 vira 0, se for 0 vira 1
+        $pdo->prepare("UPDATE produtos SET destaque=IF(destaque=1,0,1) WHERE id=?")->execute([$id]);
+        flash('Destaque atualizado.', 'success');
+    }
+    header('Location: ?page=produtos');
+    exit;
+}
 
 if ($action === 'salvar_categoria') {
     requireLogin();
@@ -536,9 +547,16 @@ $ICONES = [
                                                         <td class="fw-bold">R$ <?= number_format($p['preco'], 2, ',', '.') ?></td>
                                                         <td><span class="badge <?= $p['status'] === 'ativo' ? 'bg-success-soft' : 'bg-danger-soft' ?>"><?= $p['status'] ?></span></td>
                                                         <td class="text-end">
-                                                            <a href="?page=produtos&editar=<?= $p['id'] ?>" class="btn btn-sm btn-outline-light px-2 py-1"><i class="fa-solid fa-pen"></i></a>
-                                                            <a href="?action=toggle_status&id=<?= $p['id'] ?>&page=produtos" class="btn btn-sm btn-outline-light px-2 py-1"><i class="fa-solid <?= $p['status'] === 'ativo' ? 'fa-eye-slash' : 'fa-eye' ?>"></i></a>
-                                                            <a href="javascript:void(0)" onclick="confirmarExclusao(<?= $p['id'] ?>, '<?= htmlspecialchars($p['titulo'], ENT_QUOTES) ?>')" class="btn btn-sm btn-outline-danger px-2 py-1 border-0"><i class="fa-solid fa-trash"></i></a>
+                                                            <a href="?page=produtos&editar=<?= $p['id'] ?>" class="btn btn-sm btn-outline-light px-2 py-1" title="Editar"><i class="fa-solid fa-pen"></i></a>
+
+                                                            <a href="?action=toggle_status&id=<?= $p['id'] ?>&page=produtos" class="btn btn-sm btn-outline-light px-2 py-1" title="Alterar Status"><i class="fa-solid <?= $p['status'] === 'ativo' ? 'fa-eye-slash' : 'fa-eye' ?>"></i></a>
+
+                                                            <!-- NOVO BOTÃO DE DESTAQUE -->
+                                                            <a href="?action=toggle_destaque&id=<?= $p['id'] ?>&page=produtos" class="btn btn-sm btn-outline-light px-2 py-1" title="<?= $p['destaque'] ? 'Remover Destaque' : 'Destacar' ?>">
+                                                                <i class="fa-solid fa-star <?= $p['destaque'] ? 'text-warning' : '' ?>"></i>
+                                                            </a>
+
+                                                            <a href="javascript:void(0)" onclick="confirmarExclusao(<?= $p['id'] ?>, '<?= htmlspecialchars($p['titulo'], ENT_QUOTES) ?>')" class="btn btn-sm btn-outline-danger px-2 py-1 border-0" title="Excluir"><i class="fa-solid fa-trash"></i></a>
                                                         </td>
                                                     </tr>
                                             <?php endforeach;
