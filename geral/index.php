@@ -285,6 +285,43 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         transform: scale(0.98);
     }
 
+    /* ─── Thumb do card ─────────────────────────────────────── */
+    .card-thumb {
+        width: 100%;
+        height: 120px;
+        overflow: hidden;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .card-thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: var(--img-pos, center center);
+        display: block;
+        transition: transform 0.35s ease;
+    }
+
+    .card-produto:hover .card-thumb img {
+        transform: scale(1.04);
+    }
+
+    .card-thumb-placeholder {
+        width: 100%;
+        height: 80px;
+        background: var(--surface2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media(min-width: 640px) {
+        .card-thumb {
+            height: 140px;
+        }
+    }
+
     .card-destaque-badge {
         position: absolute;
         top: 10px;
@@ -538,6 +575,21 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
                         <span class="card-destaque-badge">Destaque</span>
                     <?php endif; ?>
 
+                    <?php
+                    $imgPos = !empty($prod['imagem_pos']) ? htmlspecialchars($prod['imagem_pos']) : 'center center';
+                    ?>
+                    <?php if (!empty($prod['imagem_url'])): ?>
+                        <div class="card-thumb">
+                            <img src="<?php echo htmlspecialchars($prod['imagem_url']); ?>"
+                                alt="<?php echo htmlspecialchars($prod['titulo']); ?>"
+                                style="--img-pos: <?php echo $imgPos; ?>;"
+                                loading="lazy">
+                        </div>
+                    <?php else: ?>
+                        <div class="card-thumb-placeholder">
+                            <i class="fa-solid fa-circle-nodes" style="color:var(--accent);font-size:1.6rem;opacity:0.4;"></i>
+                        </div>
+                    <?php endif; ?>
                     <div class="card-body">
                         <span class="card-cat">
                             <i class="<?php echo htmlspecialchars($prod['categoria_icone'] ?? 'fa-solid fa-tag'); ?>"></i>

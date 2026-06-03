@@ -424,6 +424,122 @@ $ICONES = [
                                                                 <input type="text" name="imagem_url" id="imgUrlInput" class="form-control" placeholder="https://exemplo.com/imagem.png" value="<?= htmlspecialchars($imgAtual) ?>" oninput="previewUrl(this.value)">
                                                                 <div class="small text-muted mt-1">Cole o link ou escolha uma imagem da Galeria.</div>
                                                             </div>
+                                                            <!-- Posição da imagem no card -->
+                                                            <div style="margin-top:1rem;">
+                                                                <label style="display:block;font-size:0.8rem;font-weight:700;color:var(--text2);margin-bottom:0.5rem;">
+                                                                    Posição da imagem no card
+                                                                </label>
+
+                                                                <!-- Preview interativo -->
+                                                                <div style="position:relative;width:100%;height:130px;border-radius:10px;overflow:hidden;
+                border:1px solid var(--border);margin-bottom:0.6rem;cursor:crosshair;background:var(--surface2);"
+                                                                    id="previewThumb" onclick="moverPosicao(event, this)">
+                                                                    <img id="previewImg" src="" alt="preview"
+                                                                        style="width:100%;height:100%;object-fit:cover;object-position:center center;display:none;">
+                                                                    <div id="previewPlaceholder"
+                                                                        style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:0.8rem;">
+                                                                        Adicione uma URL de imagem para ver o preview
+                                                                    </div>
+                                                                    <!-- Mira -->
+                                                                    <div id="miraPos"
+                                                                        style="display:none;position:absolute;width:16px;height:16px;
+                    border-radius:50%;background:white;border:2px solid var(--accent);
+                    transform:translate(-50%,-50%);pointer-events:none;
+                    box-shadow:0 0 0 3px rgba(59,130,246,0.4);">
+                                                                    </div>
+                                                                </div>
+
+                                                                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.5rem;">
+                                                                    <button type="button" onclick="setPosPreset('center center')" class="btn-pos-preset">Centro</button>
+                                                                    <button type="button" onclick="setPosPreset('top center')" class="btn-pos-preset">Topo</button>
+                                                                    <button type="button" onclick="setPosPreset('bottom center')" class="btn-pos-preset">Base</button>
+                                                                    <button type="button" onclick="setPosPreset('center left')" class="btn-pos-preset">Esquerda</button>
+                                                                    <button type="button" onclick="setPosPreset('center right')" class="btn-pos-preset">Direita</button>
+                                                                </div>
+
+                                                                <input type="text" name="imagem_pos" id="imagemPos"
+                                                                    value="<?php echo htmlspecialchars($produto['imagem_pos'] ?? 'center center'); ?>"
+                                                                    placeholder="ex: center top"
+                                                                    style="width:100%;background:var(--surface2);border:1px solid var(--border);
+                  border-radius:8px;color:var(--text);font-size:0.85rem;padding:0.6rem 0.8rem;outline:none;">
+                                                                <p style="font-size:0.7rem;color:var(--text3);margin-top:0.4rem;">
+                                                                    Clique no preview para ajustar o ponto de foco, ou use os presets acima.
+                                                                </p>
+                                                            </div>
+
+                                                            <style>
+                                                                .btn-pos-preset {
+                                                                    padding: 0.35rem 0.75rem;
+                                                                    font-size: 0.75rem;
+                                                                    font-weight: 600;
+                                                                    background: var(--surface2);
+                                                                    border: 1px solid var(--border);
+                                                                    border-radius: 6px;
+                                                                    color: var(--text2);
+                                                                    cursor: pointer;
+                                                                    font-family: inherit;
+                                                                    transition: all 0.15s;
+                                                                }
+
+                                                                .btn-pos-preset:hover {
+                                                                    border-color: var(--accent);
+                                                                    color: var(--text);
+                                                                }
+                                                            </style>
+
+                                                            <script>
+                                                                // Atualiza preview ao digitar URL
+                                                                document.querySelector('[name="imagem_url"]').addEventListener('input', function() {
+                                                                    const img = document.getElementById('previewImg');
+                                                                    const ph = document.getElementById('previewPlaceholder');
+                                                                    if (this.value.trim()) {
+                                                                        img.src = this.value.trim();
+                                                                        img.style.display = 'block';
+                                                                        ph.style.display = 'none';
+                                                                    } else {
+                                                                        img.style.display = 'none';
+                                                                        ph.style.display = 'flex';
+                                                                    }
+                                                                });
+
+                                                                // Clique no preview → define posição
+                                                                function moverPosicao(e, el) {
+                                                                    const rect = el.getBoundingClientRect();
+                                                                    const x = ((e.clientX - rect.left) / rect.width * 100).toFixed(1);
+                                                                    const y = ((e.clientY - rect.top) / rect.height * 100).toFixed(1);
+                                                                    const pos = x + '% ' + y + '%';
+                                                                    aplicarPos(pos, x + '%', y + '%');
+                                                                }
+
+                                                                function setPosPreset(pos) {
+                                                                    aplicarPos(pos, null, null);
+                                                                }
+
+                                                                function aplicarPos(pos, xPct, yPct) {
+                                                                    document.getElementById('imagemPos').value = pos;
+                                                                    document.getElementById('previewImg').style.objectPosition = pos;
+
+                                                                    // Mira visual
+                                                                    const mira = document.getElementById('miraPos');
+                                                                    if (xPct) {
+                                                                        mira.style.display = 'block';
+                                                                        mira.style.left = xPct;
+                                                                        mira.style.top = yPct;
+                                                                    } else {
+                                                                        mira.style.display = 'none';
+                                                                    }
+                                                                }
+
+                                                                // Inicializa preview se já tem imagem (modo edição)
+                                                                window.addEventListener('DOMContentLoaded', () => {
+                                                                    const urlField = document.querySelector('[name="imagem_url"]');
+                                                                    if (urlField && urlField.value.trim()) {
+                                                                        urlField.dispatchEvent(new Event('input'));
+                                                                        const posAtual = document.getElementById('imagemPos').value || 'center center';
+                                                                        document.getElementById('previewImg').style.objectPosition = posAtual;
+                                                                    }
+                                                                });
+                                                            </script>
 
                                                             <!-- ABA UPLOAD -->
                                                             <div class="tab-pane fade" id="tabUpload">

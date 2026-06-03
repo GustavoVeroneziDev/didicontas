@@ -20,6 +20,9 @@
 
     <link rel="icon" href="logo.ico" type="image/png">
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+
     <style>
         /* ─── Design Tokens ─────────────────────────────────────── */
         :root {
