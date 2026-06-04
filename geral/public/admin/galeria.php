@@ -85,6 +85,29 @@ if ($action === 'excluir_lote') {
 }
 
 /* ═══════════════════════════════════════
+   AÇÃO: UPLOAD DIRETO
+════════════════════════════════════════ */
+if ($action === 'upload') {
+    if (!empty($_FILES['imagem_upload']['name'])) {
+        $file = $_FILES['imagem_upload'];
+        if ($file['error'] === UPLOAD_ERR_OK) {
+            $mime = mime_content_type($file['tmp_name']);
+            $allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml'];
+            if (in_array($mime, $allowed)) {
+                $ext = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'image/gif' => 'gif', 'image/svg+xml' => 'svg'][$mime];
+                $name = uniqid('img_', true) . '.' . $ext;
+                move_uploaded_file($file['tmp_name'], UPLOAD_DIR . $name);
+                flash('Imagem adicionada à galeria com sucesso!');
+            } else {
+                flash('Formato de imagem não suportado.', 'danger');
+            }
+        }
+    }
+    header('Location: galeria.php');
+    exit;
+}
+
+/* ═══════════════════════════════════════
    AÇÃO: SALVAR IMAGEM RECORTADA
    Recebe base64, salva no disco e
    atualiza todos os produtos que usavam
@@ -144,8 +167,34 @@ $stmt = $pdo->query("
     GROUP BY p.imagem_url, p.imagem_pos
     ORDER BY p.imagem_url ASC
 ");
-$imagens = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$imagens_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$imagens = [];
+$urls_conhecidas = [];
 
+// 1. Adiciona as imagens que já estão vinculadas a produtos
+foreach ($imagens_db as $img) {
+    $imagens[] = $img;
+    $urls_conhecidas[] = $img['imagem_url'];
+}
+
+// 2. Lê a pasta física e adiciona as imagens soltas
+$arquivos = glob(UPLOAD_DIR . '*.*');
+if ($arquivos) {
+    foreach ($arquivos as $arq) {
+        if (is_file($arq) && basename($arq) !== '.htaccess') {
+            $url = UPLOAD_URL . basename($arq);
+            if (!in_array($url, $urls_conhecidas)) {
+                $imagens[] = [
+                    'imagem_url' => $url,
+                    'imagem_pos' => 'center center',
+                    'total_produtos' => 0,
+                    'produtos_nomes' => ''
+                ];
+                $urls_conhecidas[] = $url;
+            }
+        }
+    }
+}
 $flash = getFlash();
 $totalImagens = count($imagens);
 ?>
@@ -468,13 +517,23 @@ $totalImagens = count($imagens);
                     <div>
                         <h2 class="fw-bold mb-1"><i class="fa-solid fa-images text-primary me-2"></i>Galeria de Imagens</h2>
                         <p class="text-muted small mb-0">
-                            <?= $totalImagens ?> imagem(ns) em uso ·
+                            <?= $totalImagens ?> imagem(ns) exibidas ·
                             <span id="contQuebradasLabel" class="text-danger fw-bold"></span>
                         </p>
                     </div>
-                    <a href="index.php?page=produtos" class="btn btn-outline-light">
-                        <i class="fa-solid fa-arrow-left"></i> Voltar
-                    </a>
+                    <div class="d-flex gap-2">
+                        <form method="POST" action="galeria.php" enctype="multipart/form-data" id="formUploadDireto" class="m-0">
+                            <input type="hidden" name="action" value="upload">
+                            <input type="file" name="imagem_upload" id="inputUploadDireto" accept="image/*" class="d-none" onchange="document.getElementById('formUploadDireto').submit();">
+                            <button type="button" class="btn btn-success" onclick="document.getElementById('inputUploadDireto').click();">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Enviar Imagem
+                            </button>
+                        </form>
+
+                        <a href="index.php?page=produtos" class="btn btn-outline-light">
+                            <i class="fa-solid fa-arrow-left"></i> Voltar
+                        </a>
+                    </div>
                 </div>
 
                 <!-- Toolbar de filtros + seleção em lote -->

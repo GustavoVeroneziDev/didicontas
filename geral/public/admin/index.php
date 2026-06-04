@@ -235,7 +235,19 @@ if (isLogged()) {
     // Busca Inteligente: Todas as imagens únicas já usadas no banco de dados para a Galeria
     $stmt_galeria = $pdo->query("SELECT DISTINCT imagem_url FROM produtos WHERE imagem_url IS NOT NULL AND imagem_url != ''");
     $imagens_galeria = $stmt_galeria->fetchAll(PDO::FETCH_COLUMN);
-
+    
+    // Ler também as imagens soltas na pasta uploads/ que ainda não têm produto
+    $arquivos_galeria = glob(UPLOAD_DIR . '*.*');
+    if ($arquivos_galeria) {
+        foreach ($arquivos_galeria as $arq) {
+            if (is_file($arq) && basename($arq) !== '.htaccess') {
+                $url = UPLOAD_URL . basename($arq);
+                if (!in_array($url, $imagens_galeria)) {
+                    $imagens_galeria[] = $url;
+                }
+            }
+        }
+    }
     $stats = [
         'total'    => $pdo->query("SELECT COUNT(*) FROM produtos")->fetchColumn(),
         'ativos'   => $pdo->query("SELECT COUNT(*) FROM produtos WHERE status='ativo'")->fetchColumn(),
