@@ -111,13 +111,23 @@ if ($action === 'salvar_produto') {
     $cat_id   = intval($_POST['categoria_id'] ?? 0);
     $status   = ($_POST['status'] ?? '') === 'ativo' ? 'ativo' : 'inativo';
     $destaque = isset($_POST['destaque']) ? 1 : 0;
+    $img_pos  = trim($_POST['imagem_pos'] ?? 'center center');
 
     $remover    = ($_POST['remover_imagem'] ?? '') === '1';
     $img_upload = salvarImagem('imagem_arquivo');
     $img_url    = trim($_POST['imagem_url'] ?? ''); // Pode vir do input manual ou da Galeria
-
+    $img_base64 = $_POST['imagem_base64'] ?? '';
     if ($remover) {
         $img_final = null;
+    } elseif (!empty($img_base64)) {
+        // Salva a imagem recortada em Base64
+        list($type, $data) = explode(';', $img_base64);
+        list(, $data)      = explode(',', $data);
+        $data = base64_decode($data);
+
+        $name = uniqid('img_crop_', true) . '.png';
+        file_put_contents(UPLOAD_DIR . $name, $data);
+        $img_final = UPLOAD_URL . $name;
     } elseif ($img_upload) {
         $img_final = $img_upload;
     } elseif ($img_url) {
@@ -458,7 +468,7 @@ $ICONES = [
                                                                 </div>
 
                                                                 <input type="text" name="imagem_pos" id="imagemPos"
-                                                                    value="<?php echo htmlspecialchars($produto['imagem_pos'] ?? 'center center'); ?>"
+                                                                    value="<?php echo htmlspecialchars($editProd['imagem_pos'] ?? 'center center'); ?>"
                                                                     placeholder="ex: center top"
                                                                     style="width:100%;background:var(--surface2);border:1px solid var(--border);
                   border-radius:8px;color:var(--text);font-size:0.85rem;padding:0.6rem 0.8rem;outline:none;">
@@ -571,6 +581,7 @@ $ICONES = [
                                                             <button type="button" class="btn btn-danger position-absolute top-0 end-0 m-1 rounded-circle shadow-sm" style="width: 25px; height: 25px; padding: 0; display: flex; align-items: center; justify-content: center;" onclick="removerImagem()" title="Remover imagem"><i class="fa-solid fa-xmark small"></i></button>
                                                         </div>
                                                         <input type="hidden" name="remover_imagem" id="removerImagemInput" value="">
+                                                        <input type="hidden" name="imagem_base64" id="imagemBase64Input" value="">
                                                     </div>
                                                 </div>
 
@@ -657,7 +668,7 @@ $ICONES = [
                                                     <tr>
                                                         <td class="text-muted small"><?= $p['id'] ?></td>
                                                         <td>
-                                                            <div class="d-flex align-items-center gap-2"><?php if ($p['imagem_url']): ?><img src="<?= htmlspecialchars($p['imagem_url']) ?>" style="width:30px;height:30px;object-fit:contain;background:#fff;border-radius:4px;padding:2px;"><?php endif; ?><span class="fw-bold"><?= htmlspecialchars($p['titulo']) ?></span><?= $p['destaque'] ? '<i class="fa-solid fa-star text-warning small ms-1"></i>' : '' ?></div>
+                                                            <div class="d-flex align-items-center gap-2"><?php if ($p['imagem_url']): ?><img src="<?= htmlspecialchars($p['imagem_url']) ?>" style="width: 34px; height: 34px; object-fit: cover; object-position: center; background: #fff; border-radius: 8px; padding: 2px;"><?php endif; ?><span class="fw-bold"><?= htmlspecialchars($p['titulo']) ?></span><?= $p['destaque'] ? '<i class="fa-solid fa-star text-warning small ms-1"></i>' : '' ?></div>
                                                         </td>
                                                         <td><?= $p['cat_nome'] ? '<span class="badge bg-primary-soft">' . htmlspecialchars($p['cat_nome']) . '</span>' : '<span class="badge bg-secondary-soft">—</span>' ?></td>
                                                         <td class="fw-bold">R$ <?= number_format($p['preco'], 2, ',', '.') ?></td>
@@ -763,6 +774,27 @@ $ICONES = [
             </div>
         </div>
 
+        <!-- MODAL CROPPER DE IMAGEM -->
+        <div class="modal fade" id="cropModal" data-bs-backdrop="static" tabindex="-1" aria-hidden="true" data-bs-theme="dark">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content" style="background: var(--bg2); border: 1px solid var(--border);">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold"><i class="fa-solid fa-crop-simple me-2 text-primary"></i> Recortar Imagem</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center p-4">
+                        <div style="max-height: 50vh; overflow: hidden; border-radius: 8px;">
+                            <img id="cropImageTarget" src="" style="max-width: 100%; display: block;">
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-success" id="btnConfirmCrop">Confirmar Recorte</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- MODAL BOOTSTRAP DE EXCLUSÃO -->
         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true" data-bs-theme="dark">
             <div class="modal-dialog modal-dialog-centered">
@@ -823,18 +855,53 @@ $ICONES = [
                 atualizarPreviewCard();
             }
 
+            let cropper;
+            let cropModalInstance;
+
             function previewFile(input) {
                 if (!input.files || !input.files[0]) return;
-                const r = new FileReader();
-                r.onload = e => {
-                    document.getElementById('imgPreview').src = e.target.result;
-                    document.getElementById('imgPreviewWrap').style.display = 'inline-block';
-                    document.getElementById('imgUrlInput').value = '';
-                    document.getElementById('removerImagemInput').value = '';
-                    atualizarPreviewCard();
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    document.getElementById('cropImageTarget').src = e.target.result;
+                    cropModalInstance.show();
+
+                    // Aguarda o modal abrir totalmente para renderizar o Cropper
+                    document.getElementById('cropModal').addEventListener('shown.bs.modal', function onModalShow() {
+                        if (cropper) cropper.destroy();
+                        cropper = new Cropper(document.getElementById('cropImageTarget'), {
+                            aspectRatio: 1, // Fixa o recorte num Quadrado (1:1). Se quiser retangular mude para 16/9
+                            viewMode: 2,
+                            autoCropArea: 1,
+                        });
+                        document.getElementById('cropModal').removeEventListener('shown.bs.modal', onModalShow);
+                    });
                 };
-                r.readAsDataURL(input.files[0]);
+                reader.readAsDataURL(input.files[0]);
             }
+
+            document.getElementById('btnConfirmCrop')?.addEventListener('click', () => {
+                if (!cropper) return;
+
+                // Pega o recorte numa resolução legal (400x400)
+                const canvas = cropper.getCroppedCanvas({
+                    width: 400,
+                    height: 400
+                });
+                const base64 = canvas.toDataURL('image/png');
+
+                // Atualiza o preview e alimenta o input oculto
+                document.getElementById('imgPreview').src = base64;
+                document.getElementById('imgPreviewWrap').style.display = 'inline-block';
+                document.getElementById('imagemBase64Input').value = base64;
+
+                // Limpa as outras abas
+                document.getElementById('imgUrlInput').value = '';
+                document.getElementById('removerImagemInput').value = '';
+
+                atualizarPreviewCard();
+                cropModalInstance.hide();
+            });
 
             function removerImagem() {
                 document.getElementById('imgPreviewWrap').style.display = 'none';
@@ -901,6 +968,8 @@ $ICONES = [
                 if (modalEl) {
                     deleteModalInstance = new bootstrap.Modal(modalEl);
                 }
+                const cropModalEl = document.getElementById('cropModal');
+                if (cropModalEl) cropModalInstance = new bootstrap.Modal(cropModalEl);
             });
 
             function confirmarExclusao(id, titulo) {
