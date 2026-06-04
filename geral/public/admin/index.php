@@ -107,7 +107,7 @@ if ($action === 'salvar_produto') {
     $preco_str = str_replace(',', '.', $preco_str);
     $preco     = floatval($preco_str);
 
-    $ciclo    = in_array($_POST['ciclo'] ?? '', ['mensal', 'anual']) ? $_POST['ciclo'] : 'mensal';
+    $ciclo = in_array($_POST['ciclo'] ?? '', ['mensal', 'trimestral', 'semestral', 'anual', 'vitalicio']) ? $_POST['ciclo'] : 'mensal';
     $cat_id   = intval($_POST['categoria_id'] ?? 0);
     $status   = ($_POST['status'] ?? '') === 'ativo' ? 'ativo' : 'inativo';
     $destaque = isset($_POST['destaque']) ? 1 : 0;
@@ -235,7 +235,7 @@ if (isLogged()) {
     // Busca Inteligente: Todas as imagens únicas já usadas no banco de dados para a Galeria
     $stmt_galeria = $pdo->query("SELECT DISTINCT imagem_url FROM produtos WHERE imagem_url IS NOT NULL AND imagem_url != ''");
     $imagens_galeria = $stmt_galeria->fetchAll(PDO::FETCH_COLUMN);
-    
+
     // Ler também as imagens soltas na pasta uploads/ que ainda não têm produto
     $arquivos_galeria = glob(UPLOAD_DIR . '*.*');
     if ($arquivos_galeria) {
@@ -410,7 +410,11 @@ $ICONES = [
                                                 <div class="col-md-6"><label class="form-label">Ciclo</label><select name="ciclo" id="inpCiclo" class="form-select">
                                                         <option value="mensal" <?= ($editProd['ciclo'] ?? 'mensal') === 'mensal' ? 'selected' : '' ?>>Mensal</option>
                                                         <option value="anual" <?= ($editProd['ciclo'] ?? '') === 'anual' ? 'selected' : '' ?>>Anual</option>
-                                                    </select></div>
+                                                        <option value="trimestral" <?= ($editProd['ciclo'] ?? '') === 'trimestral' ? 'selected' : '' ?>>Trimestral</option>
+                                                        <option value="semestral" <?= ($editProd['ciclo'] ?? '') === 'semestral' ? 'selected' : '' ?>>Semestral</option>
+                                                        <option value="vitalicio" <?= ($editProd['ciclo'] ?? '') === 'vitalicio' ? 'selected' : '' ?>>Vitalício</option>
+                                                    </select>
+                                                </div>
                                                 <div class="col-12"><label class="form-label">Categoria</label><select name="categoria_id" id="inpCat" class="form-select">
                                                         <option value="" data-nome="Geral" data-icone="fa-solid fa-tag">Sem categoria</option><?php foreach ($categorias as $cat): ?><option value="<?= $cat['id'] ?>" data-nome="<?= htmlspecialchars($cat['nome']) ?>" data-icone="<?= htmlspecialchars($cat['icone']) ?>" <?= ($editProd['categoria_id'] ?? '') == $cat['id'] ? 'selected' : '' ?>><?= htmlspecialchars($cat['nome']) ?></option><?php endforeach; ?>
                                                     </select></div>
@@ -956,7 +960,15 @@ $ICONES = [
                 document.getElementById('prevTitle').textContent = document.getElementById('inpTitulo').value || 'Título do Produto';
                 let pText = document.getElementById('inpPreco').value.replace('R$ ', '');
                 document.getElementById('prevPrice').textContent = pText || '0,00';
-                document.getElementById('prevCiclo').textContent = document.getElementById('inpCiclo').value === 'mensal' ? '/mês' : '/ano';
+                let valCiclo = document.getElementById('inpCiclo').value;
+                let mapaCiclo = {
+                    'mensal': '/mês',
+                    'trimestral': '/tri',
+                    'semestral': '/sem',
+                    'anual': '/ano',
+                    'vitalicio': ' único'
+                };
+                document.getElementById('prevCiclo').textContent = mapaCiclo[valCiclo] || '';
                 document.getElementById('cardPreview').style.opacity = document.getElementById('inpStatus').checked ? '1' : '0.5';
                 document.getElementById('prevDestaque').style.display = document.getElementById('inpDestaque').checked ? 'block' : 'none';
                 const catSel = document.getElementById('inpCat');
@@ -967,6 +979,7 @@ $ICONES = [
                 document.getElementById('prevImgWrap').style.display = isImgVisible ? 'block' : 'none';
                 if (isImgVisible) document.getElementById('prevImg').src = document.getElementById('imgPreview').src;
             }
+
             ['inpTitulo', 'inpPreco', 'inpCiclo', 'inpCat', 'inpStatus', 'inpDestaque'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {

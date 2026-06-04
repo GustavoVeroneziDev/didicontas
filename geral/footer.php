@@ -74,14 +74,15 @@
         <!-- Price bar -->
         <div style="margin:0 1.25rem 1.25rem;
                     background:var(--surface2);border:1px solid var(--border);
-                    border-radius:12px;padding:0.9rem 1rem;
-                    display:flex;align-items:center;justify-content:space-between;">
-            <span style="font-size:0.75rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;">Investimento do Plano</span>
-            <div style="display:flex;align-items:baseline;gap:3px;">
-                <span style="font-size:0.72rem;font-weight:800;color:#60A5FA;">R$</span>
-                <span id="mdPreco" style="font-size:1.75rem;font-weight:800;color:var(--text);letter-spacing:-1px;line-height:1;">0,00</span>
-                <span id="mdCiclo" style="font-size:0.72rem;color:var(--text3);margin-left:2px;">/mes</span>
+                    border-radius:12px;padding:1rem;
+                    display:flex;flex-direction:column;align-items:center;justify-content:center;
+                    gap:4px;text-align:center;">
+            <div style="display:flex;align-items:baseline;gap:4px;line-height:1;">
+                <span style="font-size:0.8rem;font-weight:800;color:#60A5FA;">R$</span>
+                <span id="mdPreco" style="font-size:2.1rem;font-weight:800;color:var(--text);letter-spacing:-1.5px;line-height:1;">0,00</span>
             </div>
+            <span id="mdCiclo" style="font-size:0.72rem;font-weight:700;text-transform:uppercase;
+                                      letter-spacing:0.8px;color:var(--text3);margin-top:2px;">/ mês</span>
         </div>
 
         <!-- Input + buttons -->
@@ -187,7 +188,15 @@
             maximumFractionDigits: 2
         });
         document.getElementById('mdPreco').innerText = precoFormatado;
-        document.getElementById('mdCiclo').innerText = produto.ciclo === 'mensal' ? '/mes' : '/ano';
+
+        const CICLO_MODAL = {
+            mensal: '/ mês',
+            trimestral: '/ trimestre',
+            semestral: '/ semestre',
+            anual: '/ ano',
+            vitalicio: 'pagamento único'
+        };
+        document.getElementById('mdCiclo').innerText = CICLO_MODAL[produto.ciclo] || ('/ ' + produto.ciclo);
 
         /* Imagem ou placeholder */
         const cImg = document.getElementById('mdContainerImagem');
@@ -288,7 +297,14 @@
             maximumFractionDigits: 2
         });
 
-        const cicloTexto = produtoSelecionado.ciclo === 'mensal' ? 'Mensal' : 'Anual';
+        const CICLO_WA = {
+            mensal: 'Mensal',
+            trimestral: 'Trimestral',
+            semestral: 'Semestral',
+            anual: 'Anual',
+            vitalicio: 'Vitalício'
+        };
+        const cicloTexto = CICLO_WA[produtoSelecionado.ciclo] || produtoSelecionado.ciclo;
 
         const interesse = tipoAcao === 'comprar' ?
             'Comprar o plano' :

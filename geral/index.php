@@ -126,29 +126,37 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         border-color: var(--accent);
     }
 
-    /* Cycle toggle */
+    /* Cycle toggle — scroll horizontal com pílulas */
     .ciclo-toggle {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        gap: 5px;
         background: var(--surface2);
         border-radius: var(--r-sm);
-        padding: 3px;
-        gap: 3px;
+        padding: 4px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        flex-shrink: 0;
+    }
+
+    .ciclo-toggle::-webkit-scrollbar {
+        display: none;
     }
 
     .btn-ciclo {
-        padding: 0.55rem 0.5rem;
+        flex-shrink: 0;
+        padding: 0.48rem 0.9rem;
         border-radius: 6px;
         font-family: 'Plus Jakarta Sans', sans-serif;
-        font-size: 0.78rem;
-        font-weight: 600;
+        font-size: 0.76rem;
+        font-weight: 700;
         cursor: pointer;
         border: none;
         background: transparent;
         color: var(--text3);
         transition: all 0.2s;
         letter-spacing: 0.2px;
-        text-align: center;
+        white-space: nowrap;
         -webkit-tap-highlight-color: transparent;
     }
 
@@ -158,7 +166,28 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         box-shadow: 0 2px 10px rgba(59, 130, 246, 0.35);
     }
 
-    /* Category chips */
+    /* Badge de ciclo nos cards */
+    .ciclo-badge {
+        display: inline-flex;
+        align-items: center;
+        font-size: 0.6rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        padding: 0.15rem 0.45rem;
+        border-radius: 100px;
+        margin-left: 4px;
+        background: rgba(255, 255, 255, 0.07);
+        color: var(--text3);
+        border: 1px solid var(--border);
+        vertical-align: middle;
+    }
+
+    /* Category chips — scroll limitado com botão "ver mais" */
+    .cats-wrap {
+        position: relative;
+    }
+
     .cats-scroll {
         display: flex;
         gap: 0.5rem;
@@ -166,10 +195,42 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         padding-bottom: 2px;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
+        flex-wrap: nowrap;
+        transition: max-height 0.35s ease;
+    }
+
+    .cats-scroll.expandida {
+        flex-wrap: wrap;
+        overflow-x: visible;
     }
 
     .cats-scroll::-webkit-scrollbar {
         display: none;
+    }
+
+    .btn-ver-mais-cats {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 0.42rem 0.85rem;
+        border-radius: 100px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 700;
+        cursor: pointer;
+        border: 1px solid var(--border2);
+        background: transparent;
+        color: var(--text2);
+        transition: all 0.2s;
+        white-space: nowrap;
+        -webkit-tap-highlight-color: transparent;
+        margin-top: 2px;
+    }
+
+    .btn-ver-mais-cats:hover {
+        background: var(--surface2);
+        color: var(--text);
     }
 
     .btn-filtro {
@@ -531,29 +592,41 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         <!-- Filter Bar -->
         <div class="filter-bar">
 
-            <!-- Row 1: Search + Ciclo -->
-            <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
-                <div class="search-wrap" style="flex:1; min-width:160px;">
-                    <span class="ico"><i class="fa-solid fa-magnifying-glass"></i></span>
-                    <input type="text" id="pesquisaInput" onkeyup="filtrarVitrine()" placeholder="Buscar produto...">
-                </div>
-                <div class="ciclo-toggle" style="min-width:200px; max-width:220px;">
-                    <button onclick="filtrarCiclo('mensal', this)" class="btn-ciclo active">Planos Mensais</button>
-                    <button onclick="filtrarCiclo('anual', this)" class="btn-ciclo">Planos Anuais</button>
-                </div>
+            <!-- Row 1: Search -->
+            <div class="search-wrap">
+                <span class="ico"><i class="fa-solid fa-magnifying-glass"></i></span>
+                <input type="text" id="pesquisaInput" onkeyup="filtrarVitrine()" placeholder="Buscar produto...">
             </div>
 
-            <!-- Row 2: Category chips -->
-            <div class="cats-scroll">
-                <button onclick="filtrarCategoria('todas', this)" class="btn-filtro active">
-                    <i class="fa-solid fa-border-all"></i> Todas
-                </button>
-                <?php foreach ($categorias as $cat): ?>
-                    <button onclick="filtrarCategoria('cat-<?php echo $cat['id']; ?>', this)" class="btn-filtro">
-                        <i class="<?php echo htmlspecialchars($cat['icone'] ?? 'fa-solid fa-tag'); ?>"></i>
-                        <?php echo htmlspecialchars($cat['nome']); ?>
+            <!-- Row 2: Ciclo toggle (todos + cada período) -->
+            <div class="ciclo-toggle">
+                <button onclick="filtrarCiclo('todos', this)" class="btn-ciclo active">Todos</button>
+                <button onclick="filtrarCiclo('mensal', this)" class="btn-ciclo">Mensal</button>
+                <button onclick="filtrarCiclo('trimestral', this)" class="btn-ciclo">Trimestral</button>
+                <button onclick="filtrarCiclo('semestral', this)" class="btn-ciclo">Semestral</button>
+                <button onclick="filtrarCiclo('anual', this)" class="btn-ciclo">Anual</button>
+                <button onclick="filtrarCiclo('vitalicio', this)" class="btn-ciclo">Vitalício</button>
+            </div>
+
+            <!-- Row 3: Category chips + botão expandir -->
+            <div class="cats-wrap">
+                <div class="cats-scroll" id="catsScroll">
+                    <button onclick="filtrarCategoria('todas', this)" class="btn-filtro active">
+                        <i class="fa-solid fa-border-all"></i> Todas
                     </button>
-                <?php endforeach; ?>
+                    <?php foreach ($categorias as $cat): ?>
+                        <button onclick="filtrarCategoria('cat-<?php echo $cat['id']; ?>', this)" class="btn-filtro">
+                            <i class="<?php echo htmlspecialchars($cat['icone'] ?? 'fa-solid fa-tag'); ?>"></i>
+                            <?php echo htmlspecialchars($cat['nome']); ?>
+                        </button>
+                    <?php endforeach; ?>
+                </div>
+                <?php if (count($categorias) > 4): ?>
+                    <button class="btn-ver-mais-cats" id="btnVerMaisCats" onclick="toggleCats(this)">
+                        <i class="fa-solid fa-chevron-down" id="iconVerMais"></i>
+                        <span id="textoVerMais">Ver todas as categorias</span>
+                    </button>
+                <?php endif; ?>
             </div>
 
         </div>
@@ -602,7 +675,10 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
                             <div class="card-preco">
                                 <span class="preco-rs">R$</span>
                                 <span class="preco-val"><?php echo number_format($prod['preco'], 2, ',', '.'); ?></span>
-                                <span class="preco-ciclo">/<?php echo $prod['ciclo'] == 'mensal' ? 'mes' : 'ano'; ?></span>
+                                <span class="preco-ciclo">/<?php
+                                                            $labels = ['mensal' => 'mês', 'trimestral' => 'trim', 'semestral' => 'sem', 'anual' => 'ano', 'vitalicio' => 'único'];
+                                                            echo $labels[$prod['ciclo']] ?? $prod['ciclo'];
+                                                            ?></span>
                             </div>
                             <span class="card-btn">
                                 <i class="fa-solid fa-plus"></i>
@@ -630,8 +706,17 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
 <script>
     /* ── Estado dos filtros ──────────────────────────────────── */
     let categoriaFiltroAtual = 'todas';
-    let cicloFiltroAtual = 'mensal';
+    let cicloFiltroAtual = 'todos'; // padrão: mostrar tudo
     let totalVisiveis = 0;
+
+    /* ── Rótulos de ciclo legíveis ───────────────────────────── */
+    const CICLO_LABEL = {
+        mensal: 'Mensal',
+        trimestral: 'Trimestral',
+        semestral: 'Semestral',
+        anual: 'Anual',
+        vitalicio: 'Vitalício'
+    };
 
     /* ── Filtro de ciclo ────────────────────────────────────── */
     function filtrarCiclo(ciclo, botao) {
@@ -649,6 +734,16 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         filtrarVitrine();
     }
 
+    /* ── Expandir/recolher categorias ───────────────────────── */
+    function toggleCats(btn) {
+        const scroll = document.getElementById('catsScroll');
+        const icone = document.getElementById('iconVerMais');
+        const texto = document.getElementById('textoVerMais');
+        const aberto = scroll.classList.toggle('expandida');
+        icone.className = aberto ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
+        texto.textContent = aberto ? 'Recolher categorias' : 'Ver todas as categorias';
+    }
+
     /* ── Motor de filtro principal ──────────────────────────── */
     function filtrarVitrine() {
         const pesquisa = document.getElementById('pesquisaInput').value.toLowerCase().trim();
@@ -661,7 +756,7 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
             const titulo = card.dataset.titulo;
 
             const bateCat = categoriaFiltroAtual === 'todas' || cat === categoriaFiltroAtual;
-            const bateCiclo = ciclo === cicloFiltroAtual;
+            const bateCiclo = cicloFiltroAtual === 'todos' || ciclo === cicloFiltroAtual;
             const batePesquisa = titulo.includes(pesquisa);
 
             if (bateCat && bateCiclo && batePesquisa) {
