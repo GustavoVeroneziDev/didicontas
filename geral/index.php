@@ -766,7 +766,7 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
 </main>
 
 <!-- Botao Admin flutuante (ativo via body.admin-mode — para uso futuro) -->
-<a href="admin/" class="admin-fab" title="Painel Admin">
+<a href="../admin/" class="admin-fab" title="Painel Admin">
     <i class="fa-solid fa-sliders"></i>
 </a>
 
