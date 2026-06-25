@@ -584,11 +584,11 @@ $ICONES = [
 
                                         <!-- Posição da imagem -->
                                         <div style="margin-top:1rem;">
-                                            <label style="display:block;font-size:0.8rem;font-weight:700;color:var(--text2);margin-bottom:0.5rem;">Posição da imagem no card</label>
+                                            <label style="display:block;font-size:0.8rem;font-weight:700;color:var(--text-sub);margin-bottom:0.5rem;">Posição da imagem no card</label>
                                             <div style="position:relative;width:100%;height:130px;border-radius:10px;overflow:hidden;border:1px solid var(--border);margin-bottom:0.6rem;cursor:crosshair;background:var(--surface2);"
                                                 id="previewThumb" onclick="moverPosicao(event,this)">
                                                 <img id="previewImg" src="" alt="preview" style="width:100%;height:100%;object-fit:cover;object-position:center center;display:none;">
-                                                <div id="previewPlaceholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:0.8rem;">
+                                                <div id="previewPlaceholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:0.8rem;">
                                                     Adicione uma URL para ver o preview
                                                 </div>
                                                 <div id="miraPos" style="display:none;position:absolute;width:16px;height:16px;border-radius:50%;background:white;border:2px solid var(--accent);transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 0 3px rgba(59,130,246,0.4);"></div>
@@ -603,14 +603,15 @@ $ICONES = [
                                             <input type="text" name="imagem_pos" id="imagemPos"
                                                 value="<?= htmlspecialchars($editProd['imagem_pos'] ?? 'center center') ?>"
                                                 placeholder="ex: center top"
-                                                style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.85rem;padding:0.6rem 0.8rem;outline:none;">
-                                            <p style="font-size:0.7rem;color:var(--text3);margin-top:0.4rem;">
+                                                class="form-control"
+                                                style="font-size:0.85rem;">
+                                            <p style="font-size:0.7rem;color:var(--text-muted);margin-top:0.4rem;">
                                                 Clique no preview para ajustar o ponto de foco, ou use os presets.
                                             </p>
                                         </div>
 
                                         <style>
-                                            .btn-pos-preset { padding:0.35rem 0.75rem;font-size:0.75rem;font-weight:600;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text2);cursor:pointer;font-family:inherit;transition:all 0.15s; }
+                                            .btn-pos-preset { padding:0.35rem 0.75rem;font-size:0.75rem;font-weight:600;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text-sub);cursor:pointer;font-family:inherit;transition:all 0.15s; }
                                             .btn-pos-preset:hover { border-color:var(--accent);color:var(--text); }
                                         </style>
 
