@@ -394,14 +394,16 @@ $ICONES = [
             <h2 class="fw-bold mb-0">didi<span style="color:var(--yellow);">contas</span></h2>
             <small class="text-muted">Painel Administrativo</small>
         </div>
-        <?php if (!$flash): ?>
-            <?php try { $pdo->query("SELECT 1 FROM usuarios LIMIT 1"); } catch (PDOException $e): ?>
-                <div class="alert alert-warning py-2 text-center small">
-                    <i class="fa-solid fa-triangle-exclamation me-1"></i>
-                    Tabela de usuários não encontrada. Execute
-                    <a href="../config/setup.php" class="alert-link">config/setup.php</a> primeiro.
-                </div>
-            <?php endtry; ?>
+        <?php
+        $tabela_ok = true;
+        try { $pdo->query("SELECT 1 FROM usuarios LIMIT 1"); }
+        catch (PDOException $e) { $tabela_ok = false; }
+        if (!$flash && !$tabela_ok): ?>
+            <div class="alert alert-warning py-2 text-center small">
+                <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                Tabela de usuários não encontrada. Execute
+                <a href="../config/setup.php" class="alert-link">config/setup.php</a> primeiro.
+            </div>
         <?php endif; ?>
         <?php if ($flash): ?>
             <div class="alert alert-<?= $flash['type'] ?> py-2 text-center small"><?= htmlspecialchars($flash['msg']) ?></div>
