@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-$conexao_path = __DIR__ . '/../../config/conexao.php';
+$conexao_path = __DIR__ . '/../config/conexao.php';
 if (!file_exists($conexao_path)) {
     die('<div class="alert alert-danger m-4">ERRO: conexao.php não encontrado.</div>');
 }
