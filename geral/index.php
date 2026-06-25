@@ -99,7 +99,7 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         left: 14px;
         top: 50%;
         transform: translateY(-50%);
-        color: var(--text3);
+        color: var(--text2);
         font-size: 0.85rem;
         pointer-events: none;
     }
@@ -112,10 +112,11 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         color: var(--text);
         font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 0.9rem;
-        padding: 0.65rem 1rem 0.65rem 2.6rem;
+        padding: 0.65rem 2.4rem 0.65rem 2.6rem;
         outline: none;
         transition: border-color 0.2s;
         -webkit-appearance: none;
+        appearance: none;
     }
 
     .search-wrap input::placeholder {
@@ -124,6 +125,28 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
 
     .search-wrap input:focus {
         border-color: var(--accent);
+    }
+
+    .btn-limpar-busca {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: var(--text2);
+        cursor: pointer;
+        font-size: 0.8rem;
+        padding: 4px 6px;
+        line-height: 1;
+        border-radius: 4px;
+        display: none;
+        transition: color 0.15s;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-limpar-busca:hover {
+        color: var(--text);
     }
 
     /* Cycle toggle — scroll horizontal com pílulas */
@@ -153,7 +176,7 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         cursor: pointer;
         border: none;
         background: transparent;
-        color: var(--text3);
+        color: var(--text2);
         transition: all 0.2s;
         letter-spacing: 0.2px;
         white-space: nowrap;
@@ -178,8 +201,8 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         border-radius: 100px;
         margin-left: 4px;
         background: rgba(255, 255, 255, 0.07);
-        color: var(--text3);
-        border: 1px solid var(--border);
+        color: var(--text2);
+        border: 1px solid var(--border2);
         vertical-align: middle;
     }
 
@@ -274,7 +297,7 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1.5px;
-        color: var(--text3);
+        color: var(--text2);
         margin-bottom: 1rem;
         padding-top: 0.25rem;
     }
@@ -370,7 +393,7 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
 
     .card-thumb-placeholder {
         width: 100%;
-        height: 80px;
+        height: 120px;
         background: var(--surface2);
         display: flex;
         align-items: center;
@@ -437,6 +460,7 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         line-height: 1.3;
         display: -webkit-box;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
@@ -465,7 +489,7 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
 
     .preco-rs {
         font-size: 0.68rem;
-        color: var(--text3);
+        color: #60A5FA;
         font-weight: 700;
     }
 
@@ -484,7 +508,7 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
 
     .preco-ciclo {
         font-size: 0.68rem;
-        color: var(--text3);
+        color: var(--text2);
         margin-left: 2px;
     }
 
@@ -516,19 +540,56 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         border: 1px solid var(--border);
         border-radius: var(--r);
         margin-top: 1rem;
-        color: var(--text3);
+        color: var(--text2);
     }
 
     #avisoSemResultados i {
         font-size: 2rem;
         margin-bottom: 0.75rem;
         display: block;
-        opacity: 0.4;
+        opacity: 0.5;
+        color: var(--text3);
     }
 
     #avisoSemResultados p {
         font-size: 0.9rem;
         font-weight: 500;
+    }
+
+    /* ─── Botão Voltar ao Topo ──────────────────────────────────── */
+    .btn-topo {
+        position: fixed;
+        bottom: calc(1.5rem + env(safe-area-inset-bottom));
+        right: 1.25rem;
+        z-index: 80;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--surface2);
+        border: 1px solid var(--border2);
+        color: var(--text2);
+        cursor: pointer;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+        transition: opacity 0.25s, transform 0.25s, border-color 0.2s, color 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(10px);
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-topo.visivel {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
+
+    .btn-topo:hover {
+        border-color: var(--accent);
+        color: var(--accent);
     }
 
     /* ─── Animations ────────────────────────────────────────────── */
@@ -595,7 +656,10 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
             <!-- Row 1: Search -->
             <div class="search-wrap">
                 <span class="ico"><i class="fa-solid fa-magnifying-glass"></i></span>
-                <input type="text" id="pesquisaInput" onkeyup="filtrarVitrine()" placeholder="Buscar produto...">
+                <input type="text" id="pesquisaInput" onkeyup="filtrarVitrine()" placeholder="Buscar produto..." aria-label="Buscar produto">
+                <button class="btn-limpar-busca" id="btnLimparBusca" onclick="limparPesquisa()" aria-label="Limpar busca">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
 
             <!-- Row 2: Ciclo toggle (todos + cada período) -->
@@ -642,7 +706,10 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
                     data-categoria="cat-<?php echo $prod['categoria_id']; ?>"
                     data-ciclo="<?php echo $prod['ciclo']; ?>"
                     data-titulo="<?php echo strtolower(htmlspecialchars($prod['titulo'])); ?>"
-                    style="animation-delay:<?php echo $i * 0.04; ?>s">
+                    style="animation-delay:<?php echo $i * 0.04; ?>s"
+                    role="button"
+                    tabindex="0"
+                    aria-label="Ver detalhes de <?php echo htmlspecialchars($prod['titulo']); ?>">
 
                     <?php if (!empty($prod['destaque'])): ?>
                         <span class="card-destaque-badge">Destaque</span>
@@ -703,20 +770,16 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
     <i class="fa-solid fa-sliders"></i>
 </a>
 
+<!-- Botão Voltar ao Topo -->
+<button class="btn-topo" id="btnTopo" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo">
+    <i class="fa-solid fa-arrow-up"></i>
+</button>
+
 <script>
     /* ── Estado dos filtros ──────────────────────────────────── */
     let categoriaFiltroAtual = 'todas';
-    let cicloFiltroAtual = 'todos'; // padrão: mostrar tudo
+    let cicloFiltroAtual = 'todos';
     let totalVisiveis = 0;
-
-    /* ── Rótulos de ciclo legíveis ───────────────────────────── */
-    const CICLO_LABEL = {
-        mensal: 'Mensal',
-        trimestral: 'Trimestral',
-        semestral: 'Semestral',
-        anual: 'Anual',
-        vitalicio: 'Vitalício'
-    };
 
     /* ── Filtro de ciclo ────────────────────────────────────── */
     function filtrarCiclo(ciclo, botao) {
@@ -744,11 +807,23 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         texto.textContent = aberto ? 'Recolher categorias' : 'Ver todas as categorias';
     }
 
+    /* ── Limpar pesquisa ────────────────────────────────────── */
+    function limparPesquisa() {
+        document.getElementById('pesquisaInput').value = '';
+        document.getElementById('btnLimparBusca').style.display = 'none';
+        filtrarVitrine();
+        document.getElementById('pesquisaInput').focus();
+    }
+
     /* ── Motor de filtro principal ──────────────────────────── */
     function filtrarVitrine() {
         const pesquisa = document.getElementById('pesquisaInput').value.toLowerCase().trim();
         const cards = document.querySelectorAll('.card-produto');
         totalVisiveis = 0;
+
+        /* Mostra/oculta botão limpar */
+        const btnLimpar = document.getElementById('btnLimparBusca');
+        if (btnLimpar) btnLimpar.style.display = pesquisa ? 'block' : 'none';
 
         cards.forEach((card, i) => {
             const cat = card.dataset.categoria;
@@ -768,7 +843,6 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
             }
         });
 
-        // Atualiza label da seção
         const label = document.getElementById('sectionLabel');
         if (label) {
             label.textContent = totalVisiveis + ' plano' + (totalVisiveis !== 1 ? 's' : '') + ' encontrado' + (totalVisiveis !== 1 ? 's' : '');
@@ -777,6 +851,24 @@ $produtos = $stmt_prod->fetchAll(PDO::FETCH_ASSOC);
         const aviso = document.getElementById('avisoSemResultados');
         aviso.style.display = totalVisiveis === 0 ? 'block' : 'none';
     }
+
+    /* ── Acessibilidade: ativar card com teclado ─────────────── */
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.card-produto').forEach(card => {
+            card.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    card.click();
+                }
+            });
+        });
+    });
+
+    /* ── Botão voltar ao topo ───────────────────────────────── */
+    window.addEventListener('scroll', () => {
+        const btn = document.getElementById('btnTopo');
+        if (btn) btn.classList.toggle('visivel', window.scrollY > 350);
+    }, { passive: true });
 
     window.onload = () => filtrarVitrine();
 </script>

@@ -20,9 +20,6 @@
 
     <link rel="icon" href="logo.ico" type="image/png">
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
-
     <style>
         /* ─── Design Tokens ─────────────────────────────────────── */
         :root {
@@ -39,10 +36,11 @@
             --green-dim: rgba(16, 185, 129, 0.12);
             --text: #F1F5F9;
             --text2: #94A3B8;
-            --text3: #475569;
+            --text3: #64748B;
             --yellow: #F59E0B;
             --r: 14px;
             --r-sm: 8px;
+            color-scheme: dark;
         }
 
         /* ─── Base ──────────────────────────────────────────────── */
@@ -78,6 +76,27 @@
                 radial-gradient(ellipse 50vw 40vh at 0% 80%, rgba(99, 102, 241, 0.05) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
+        }
+
+        /* ─── Text Selection ───────────────────────────────────── */
+        ::selection {
+            background: rgba(59, 130, 246, 0.35);
+            color: #fff;
+        }
+
+        /* ─── Focus Visible (teclado/acessibilidade) ────────────── */
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* ─── Reduced Motion ────────────────────────────────────── */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
         }
 
         /* ─── Scrollbar ─────────────────────────────────────────── */

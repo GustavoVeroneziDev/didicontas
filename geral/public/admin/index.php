@@ -80,7 +80,7 @@ $action = $_POST['action'] ?? $_GET['action'] ?? '';
 if ($action === 'login') {
     $user = trim($_POST['usuario'] ?? '');
     $pass = $_POST['senha'] ?? '';
-    if (($user === ADMIN_USER) && (password_verify($pass, ADMIN_PASS) || $pass === ADMIN_PASS_DEMO)) {
+    if ($user === ADMIN_USER && (password_verify($pass, ADMIN_PASS) || $pass === ADMIN_PASS_DEMO)) {
         $_SESSION['dc_admin'] = true;
         header('Location: ?page=produtos');
         exit;
@@ -148,10 +148,10 @@ if ($action === 'salvar_produto') {
     }
 
     if ($id > 0) {
-        $pdo->prepare("UPDATE produtos SET titulo=?,descricao=?,preco=?,ciclo=?,categoria_id=?,status=?,destaque=?,imagem_url=? WHERE id=?")->execute([$titulo, $desc, $preco, $ciclo, $cat_id ?: null, $status, $destaque, $img_final, $id]);
+        $pdo->prepare("UPDATE produtos SET titulo=?,descricao=?,preco=?,ciclo=?,categoria_id=?,status=?,destaque=?,imagem_url=?,imagem_pos=? WHERE id=?")->execute([$titulo, $desc, $preco, $ciclo, $cat_id ?: null, $status, $destaque, $img_final, $img_pos, $id]);
         flash('Produto atualizado.', 'success');
     } else {
-        $pdo->prepare("INSERT INTO produtos (titulo,descricao,preco,ciclo,categoria_id,status,destaque,imagem_url) VALUES (?,?,?,?,?,?,?,?)")->execute([$titulo, $desc, $preco, $ciclo, $cat_id ?: null, $status, $destaque, $img_final]);
+        $pdo->prepare("INSERT INTO produtos (titulo,descricao,preco,ciclo,categoria_id,status,destaque,imagem_url,imagem_pos) VALUES (?,?,?,?,?,?,?,?,?)")->execute([$titulo, $desc, $preco, $ciclo, $cat_id ?: null, $status, $destaque, $img_final, $img_pos]);
         flash('Produto criado.', 'success');
     }
     header('Location: ?page=produtos');
@@ -229,6 +229,14 @@ if ($action === 'excluir_categoria') {
 }
 
 /* ═══ DADOS DA VIEW ══════════════════════════════════════ */
+/* Valores padrão — evitam warnings de "variável indefinida" no linter,
+   já que estas variáveis só são usadas dentro do bloco else (isLogged). */
+$categorias      = [];
+$imagens_galeria = [];
+$stats           = ['total' => 0, 'ativos' => 0, 'inativos' => 0, 'cats' => 0];
+$produtos        = [];
+$editProd        = null;
+
 if (isLogged()) {
     $categorias = $pdo->query("SELECT * FROM categorias ORDER BY nome ASC")->fetchAll(PDO::FETCH_ASSOC);
 

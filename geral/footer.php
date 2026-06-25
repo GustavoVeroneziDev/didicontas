@@ -82,7 +82,7 @@
                 <span id="mdPreco" style="font-size:2.1rem;font-weight:800;color:var(--text);letter-spacing:-1.5px;line-height:1;">0,00</span>
             </div>
             <span id="mdCiclo" style="font-size:0.72rem;font-weight:700;text-transform:uppercase;
-                                      letter-spacing:0.8px;color:var(--text3);margin-top:2px;">/ mês</span>
+                                      letter-spacing:0.8px;color:var(--text2);margin-top:2px;">/ mês</span>
         </div>
 
         <!-- Input + buttons -->
@@ -100,10 +100,14 @@
                     style="width:100%;background:var(--surface2);border:1px solid var(--border);
                               border-radius:10px;color:var(--text);
                               font-family:'Plus Jakarta Sans',sans-serif;font-size:0.95rem;
-                              padding:0.8rem 1rem;outline:none;transition:border-color 0.2s;
-                              -webkit-appearance:none;"
+                              padding:0.8rem 1rem;outline:none;transition:border-color 0.2s,box-shadow 0.2s;
+                              -webkit-appearance:none;appearance:none;"
                     onfocus="this.style.borderColor='var(--accent)'"
                     onblur="this.style.borderColor='var(--border)'">
+                <p id="nomeErro" aria-live="assertive"
+                    style="display:none;font-size:0.72rem;font-weight:600;color:#F87171;margin-top:0.35rem;">
+                    Informe seu nome antes de continuar.
+                </p>
             </div>
 
             <!-- Action buttons -->
@@ -161,7 +165,49 @@
             transform: translate(-50%, -50%) !important;
         }
     }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20%       { transform: translateX(-7px); }
+        40%       { transform: translateX(7px); }
+        60%       { transform: translateX(-4px); }
+        80%       { transform: translateX(4px); }
+    }
+
+    #toastWA {
+        position: fixed;
+        bottom: calc(5.5rem + env(safe-area-inset-bottom));
+        left: 50%;
+        transform: translateX(-50%) translateY(14px);
+        background: #10B981;
+        color: #fff;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.85rem;
+        font-weight: 700;
+        padding: 0.65rem 1.25rem;
+        border-radius: 100px;
+        z-index: 300;
+        opacity: 0;
+        transition: opacity 0.25s, transform 0.25s;
+        pointer-events: none;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    #toastWA.visivel {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
 </style>
+
+<!-- Toast de confirmação WhatsApp -->
+<div id="toastWA" role="status" aria-live="polite">
+    <i class="fa-brands fa-whatsapp"></i>
+    Abrindo WhatsApp...
+</div>
 
 <script>
     /* ═══════════════════════════════════════════════
@@ -213,7 +259,7 @@
                             justify-content:center;gap:6px;">
                     <i class="fa-solid fa-circle-nodes" style="color:var(--accent);font-size:1.4rem;opacity:0.7;"></i>
                     <span style="font-size:0.68rem;font-weight:700;text-transform:uppercase;
-                                 letter-spacing:1px;color:var(--text3);">Plano Digital Premium</span>
+                                 letter-spacing:1px;color:var(--text2);">Plano Digital Premium</span>
                 </div>`;
         }
 
@@ -242,7 +288,11 @@
             });
         });
 
-        setTimeout(() => document.getElementById('nomeClienteInput').focus(), 400);
+        /* Foca o input após a transição terminar (mais confiável que setTimeout fixo) */
+        sheet.addEventListener('transitionend', function focusOnOpen() {
+            sheet.removeEventListener('transitionend', focusOnOpen);
+            document.getElementById('nomeClienteInput').focus();
+        }, { once: true });
     }
 
     /* ═══════════════════════════════════════════════
@@ -282,11 +332,19 @@
         const nomeUser = document.getElementById('nomeClienteInput').value.trim();
 
         if (!nomeUser) {
-            document.getElementById('nomeClienteInput').style.borderColor = '#EF4444';
-            document.getElementById('nomeClienteInput').focus();
+            const inp = document.getElementById('nomeClienteInput');
+            const erro = document.getElementById('nomeErro');
+            inp.style.borderColor = '#EF4444';
+            inp.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.2)';
+            inp.style.animation = 'shake 0.4s ease';
+            if (erro) erro.style.display = 'block';
+            inp.focus();
             setTimeout(() => {
-                document.getElementById('nomeClienteInput').style.borderColor = 'var(--border)';
-            }, 1800);
+                inp.style.borderColor = 'var(--border)';
+                inp.style.boxShadow = 'none';
+                inp.style.animation = '';
+                if (erro) erro.style.display = 'none';
+            }, 2500);
             return;
         }
 
@@ -326,6 +384,14 @@
 \`${observacao}\``;
 
         const urlFinal = `https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(textoMensagem)}`;
+
+        /* Toast de confirmação */
+        const toast = document.getElementById('toastWA');
+        if (toast) {
+            toast.classList.add('visivel');
+            setTimeout(() => toast.classList.remove('visivel'), 2500);
+        }
+
         window.open(urlFinal, '_blank', 'noopener,noreferrer');
         fecharModal();
     }
