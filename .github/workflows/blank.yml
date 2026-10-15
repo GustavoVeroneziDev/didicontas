@@ -10,7 +10,32 @@ on:
   workflow_dispatch:
 
 jobs:
+  # CI: php -l (PHP 8.2, a mesma da hospedagem) em todo .php do repositório. Todo job de deploy tem
+  # `needs: verificar` — com um erro de sintaxe, nada sobe (base: biblioteca-pessoal/.github/workflows/deploy.template.yml).
+  verificar:
+    name: Verificar PHP (php -l)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: PHP 8.2 (a mesma versão da hospedagem)
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: php -l em todo .php — um erro de sintaxe trava o deploy
+        run: |
+          erros=0
+          while IFS= read -r -d '' f; do
+            php -l "$f" > /tmp/lint.txt 2>&1 || { erros=$((erros+1)); cat /tmp/lint.txt; }
+          done < <(git ls-files -z '*.php')
+          echo "Arquivos .php com erro de sintaxe: $erros"
+          [ "$erros" -eq 0 ]
+
   deploy:
+    needs: verificar
     name: 🚀 Deploy via FTP
     runs-on: ubuntu-latest
 
